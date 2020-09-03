@@ -1,9 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { WrappedIntlProvider } from "./react-components/wrapped-intl-provider";
+import { IntlProvider } from "react-intl";
 import registerTelemetry from "./telemetry";
 import Store from "./storage/store";
 import "./utils/theme";
+import { lang, messages } from "./utils/i18n";
 import { AuthContextProvider } from "./react-components/auth/AuthContext";
 import { VerifyPage } from "./react-components/auth/VerifyPage";
 import "./assets/stylesheets/globals.scss";
@@ -15,11 +16,11 @@ window.APP = { store };
 
 function Root() {
   return (
-    <WrappedIntlProvider>
+    <IntlProvider locale={lang} messages={messages}>
       <AuthContextProvider store={store}>
         <VerifyPage />
       </AuthContextProvider>
-    </WrappedIntlProvider>
+    </IntlProvider>
   );
 }
 

@@ -1,5 +1,6 @@
 import nipplejs from "nipplejs";
 import styles from "./virtual-gamepad-controls.css";
+const HIDDEN_JOYSTICK_STYLE = `${styles.mockJoystick}__hidden`;
 
 /**
  * Instantiates 2D virtual gamepads and emits associated events.
@@ -43,14 +44,14 @@ AFRAME.registerComponent("virtual-gamepad-controls", {
     if (this.enableLeft) {
       this.createLeftStick();
     } else {
-      this.leftMock.classList.add(styles.hidden);
-      this.leftMockSmall.classList.add(styles.hidden);
+      this.leftMock.classList.add(HIDDEN_JOYSTICK_STYLE);
+      this.leftMockSmall.classList.add(HIDDEN_JOYSTICK_STYLE);
     }
     if (this.enableRight) {
       this.createRightStick();
     } else {
-      this.rightMock.classList.add(styles.hidden);
-      this.rightMockSmall.classList.add(styles.hidden);
+      this.rightMock.classList.add(HIDDEN_JOYSTICK_STYLE);
+      this.rightMockSmall.classList.add(HIDDEN_JOYSTICK_STYLE);
     }
     this.onPreferenceChange = this.onPreferenceChange.bind(this);
     window.APP.store.addEventListener("statechanged", this.onPreferenceChange);
@@ -77,8 +78,8 @@ AFRAME.registerComponent("virtual-gamepad-controls", {
     if (!this.enableLeft && newEnableLeft) {
       this.createLeftStick();
     } else if (this.enableLeft && !newEnableLeft) {
-      this.leftMock.classList.add(styles.hidden);
-      this.leftMockSmall.classList.add(styles.hidden);
+      this.leftMock.classList.add(HIDDEN_JOYSTICK_STYLE);
+      this.leftMockSmall.classList.add(HIDDEN_JOYSTICK_STYLE);
       this.leftStick.destroy();
       this.leftTouchZone.parentNode.removeChild(this.leftTouchZone);
       this.leftStick = null;
@@ -87,8 +88,8 @@ AFRAME.registerComponent("virtual-gamepad-controls", {
     if (!this.enableRight && newEnableRight) {
       this.createRightStick();
     } else if (this.enableRight && !newEnableRight) {
-      this.rightMock.classList.add(styles.hidden);
-      this.rightMockSmall.classList.add(styles.hidden);
+      this.rightMock.classList.add(HIDDEN_JOYSTICK_STYLE);
+      this.rightMockSmall.classList.add(HIDDEN_JOYSTICK_STYLE);
       this.rightStick.destroy();
       this.rightTouchZone.parentNode.removeChild(this.rightTouchZone);
       this.rightStick = null;
@@ -98,13 +99,13 @@ AFRAME.registerComponent("virtual-gamepad-controls", {
     this.enableRight = newEnableRight;
 
     if (this.enableLeft) {
-      this.leftMock.classList.remove(styles.hidden);
-      this.leftMockSmall.classList.remove(styles.hidden);
+      this.leftMock.classList.remove(HIDDEN_JOYSTICK_STYLE);
+      this.leftMockSmall.classList.remove(HIDDEN_JOYSTICK_STYLE);
       this.leftStick.on("start", this.onFirstInteraction);
     }
     if (this.enableRight) {
-      this.rightMock.classList.remove(styles.hidden);
-      this.rightMockSmall.classList.remove(styles.hidden);
+      this.rightMock.classList.remove(HIDDEN_JOYSTICK_STYLE);
+      this.rightMockSmall.classList.remove(HIDDEN_JOYSTICK_STYLE);
       this.rightStick.on("start", this.onFirstInteraction);
     }
     if ((this.enableLeft || this.enableRight) && !this.mockJoystickContainer.parentNode) {

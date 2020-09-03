@@ -8,10 +8,13 @@ import React from "react";
 import ReactDOM from "react-dom";
 import copy from "copy-to-clipboard";
 import { detectOS } from "detect-browser";
-import { FormattedMessage } from "react-intl";
-import { WrappedIntlProvider } from "./react-components/wrapped-intl-provider";
+import { IntlProvider, FormattedMessage, addLocaleData } from "react-intl";
+import en from "react-intl/locale-data/en";
+addLocaleData([...en]);
+
 import styles from "./assets/stylesheets/support.scss";
 import configs from "./utils/configs";
+import { lang, messages } from "./utils/i18n";
 
 const SHORTHAND_INITIALIZER = "var foo = 'bar'; var baz = { foo };";
 const SPREAD_SYNTAX = "var foo = {}; var baz = { ...foo };";
@@ -80,7 +83,7 @@ class Support extends React.Component {
     const detectedOS = detectOS(navigator.userAgent);
 
     return (
-      <WrappedIntlProvider>
+      <IntlProvider locale={lang} messages={messages}>
         <div className={styles.supportMain}>
           <div className={styles.supportContent}>
             <div>
@@ -124,7 +127,7 @@ class Support extends React.Component {
             )}
           </div>
         </div>
-      </WrappedIntlProvider>
+      </IntlProvider>
     );
   }
 }

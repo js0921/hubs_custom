@@ -62,14 +62,9 @@
     @extend %radio-checked;
   }
 
-  :local(.radio-title) {
-    font-weight: bold;
-  }
-
-  :local(.radio-text) {
+  span {
     color: var(--panel-subtext-color);
-    font-size: 0.9em;
-    font-weight: normal;
+    font-size: 0.8em;
   }
 
   label {
@@ -80,23 +75,6 @@
     div {
       display: flex;
       flex-direction: column;
-    }
-  }
-
-  :local(.invite-link) {
-    color: var(--panel-subtext-color);
-    display: block;
-    margin-top: 0.1em;
-    .link {
-      padding: 0 0.5em;
-    }
-    a { 
-      cursor: pointer;
-      text-decoration: underline;
-      color: $action-label-color;
-    }
-    .revoke {
-      font-weight: normal;
     }
   }
 }

@@ -34,6 +34,9 @@ import { App } from "./App";
 window.APP = new App();
 
 const qs = new URLSearchParams(location.search);
+const isMobile = AFRAME.utils.device.isMobile() || AFRAME.utils.device.isMobileVR();
+
+window.APP.quality = window.APP.store.state.preferences.materialQualitySetting || isMobile ? "low" : "high";
 
 import "./components/event-repeater";
 
@@ -59,6 +62,9 @@ const onReady = async () => {
 
   const sceneId = qs.get("scene_id") || document.location.pathname.substring(1).split("/")[1];
   console.log(`Scene ID: ${sceneId}`);
+
+  // Disable shadows on low quality
+  scene.setAttribute("shadow", { enabled: window.APP.quality !== "low" });
 
   let uiProps = { sceneId: sceneId };
 
@@ -94,7 +100,7 @@ const onReady = async () => {
     });
   });
 
-  sceneModelEntity.addEventListener("environment-scene-loaded", () => {
+  sceneModelEntity.addEventListener("scene-loaded", () => {
     remountUI({ sceneLoaded: true });
     const previewCamera = gltfEl.object3D.getObjectByName("scene-preview-camera");
 
@@ -126,9 +132,7 @@ const onReady = async () => {
   console.log(`Scene Model URL: ${modelUrl}`);
 
   gltfEl.setAttribute("gltf-model-plus", { src: modelUrl, useCache: false, inflate: true });
-  gltfEl.addEventListener("model-loaded", ({ detail: { model } }) =>
-    sceneModelEntity.emit("environment-scene-loaded", model)
-  );
+  gltfEl.addEventListener("model-loaded", () => sceneModelEntity.emit("scene-loaded"));
   sceneModelEntity.appendChild(gltfEl);
   sceneRoot.appendChild(sceneModelEntity);
 

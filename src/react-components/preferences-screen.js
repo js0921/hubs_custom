@@ -5,12 +5,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import { faUndo } from "@fortawesome/free-solid-svg-icons/faUndo";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
-import { FormattedMessage } from "react-intl";
-import { WrappedIntlProvider } from "./wrapped-intl-provider";
+import en from "react-intl/locale-data/en";
+import { FormattedMessage, IntlProvider, addLocaleData } from "react-intl";
 import styles from "../assets/stylesheets/preferences-screen.scss";
-import { getMessages } from "../utils/i18n";
+import { lang, messages } from "../utils/i18n";
 
 const isMobile = AFRAME.utils.device.isMobile() || AFRAME.utils.device.isMobileVR();
+addLocaleData([...en]);
 
 function round(step, n) {
   return Math.round(n / step) * step;
@@ -28,8 +29,8 @@ function ResetToDefaultButton({ onClick }) {
   return (
     <button
       className={styles.noDefaultButtonStyle}
-      title={getMessages()["preferences.resetToDefault"]}
-      aria-label={getMessages()["preferences.resetToDefault"]}
+      title={messages["preferences.resetToDefault"]}
+      aria-label={messages["preferences.resetToDefault"]}
       onClick={onClick}
     >
       <i className={styles.flex}>
@@ -373,7 +374,7 @@ export class PreferenceListItem extends Component {
   render() {
     const isCheckbox = this.props.prefType === PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX;
     const isSmallScreen = window.innerWidth < 600;
-    const label = <span className={styles.preferenceLabel}>{getMessages()[`preferences.${this.props.storeKey}`]}</span>;
+    const label = <span className={styles.preferenceLabel}>{messages[`preferences.${this.props.storeKey}`]}</span>;
     const hasPref =
       this.props.store.state.preferences[this.props.storeKey] !== undefined ||
       (this.props.prefType === PREFERENCE_LIST_ITEM_TYPE.MAX_RESOLUTION &&
@@ -447,11 +448,11 @@ const CATEGORY_MOVEMENT = 3;
 const CATEGORY_TOUCHSCREEN = 4;
 const TOP_LEVEL_CATEGORIES = [CATEGORY_AUDIO, CATEGORY_CONTROLS, CATEGORY_MISC];
 const CATEGORY_NAMES = new Map([
-  [CATEGORY_AUDIO, getMessages()[`preferences.category_audio`]],
-  [CATEGORY_CONTROLS, getMessages()["preferences.category_controls"]],
-  [CATEGORY_MISC, getMessages()["preferences.category_misc"]],
-  [CATEGORY_MOVEMENT, getMessages()["preferences.category_movement"]],
-  [CATEGORY_TOUCHSCREEN, getMessages()["preferences.category_touchscreen"]]
+  [CATEGORY_AUDIO, messages[`preferences.category_audio`]],
+  [CATEGORY_CONTROLS, messages["preferences.category_controls"]],
+  [CATEGORY_MISC, messages["preferences.category_misc"]],
+  [CATEGORY_MOVEMENT, messages["preferences.category_movement"]],
+  [CATEGORY_TOUCHSCREEN, messages["preferences.category_touchscreen"]]
 ]);
 
 function NavItem({ ariaLabel, title, onClick, selected }) {
@@ -475,7 +476,7 @@ function CloseButton({ onClick }) {
   return (
     <button
       autoFocus
-      aria-label={getMessages()["preferences.closeButton"]}
+      aria-label={messages["preferences.closeButton"]}
       className={classNames(styles.closeButton)}
       onClick={onClick}
     >
@@ -588,21 +589,14 @@ const DEFINITIONS = new Map([
       {
         key: "materialQualitySetting",
         prefType: PREFERENCE_LIST_ITEM_TYPE.SELECT,
-        options: [{ value: "low", text: "Low" }, { value: "medium", text: "Medium" }, { value: "high", text: "High" }],
+        options: [{ value: "low", text: "Low" }, { value: "high", text: "High" }],
         defaultString: isMobile ? "low" : "high",
-        promptForRefresh: true
-      },
-      {
-        key: "enableDynamicShadows",
-        prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX,
-        defaultBool: false,
         promptForRefresh: true
       },
       { key: "disableAutoPixelRatio", prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX, defaultBool: false },
       { key: "allowMultipleHubsInstances", prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX, defaultBool: false },
       { key: "disableIdleDetection", prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX, defaultBool: false },
-      { key: "preferMobileObjectInfoPanel", prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX, defaultBool: false },
-      { key: "animateWaypointTransitions", prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX, defaultBool: true }
+      { key: "preferMobileObjectInfoPanel", prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX, defaultBool: false }
     ]
   ]
 ]);
@@ -706,7 +700,7 @@ class RefreshPrompt extends React.Component {
       <div ref={this.ref} className={styles.toast}>
         <div className={styles.row}>
           <WarnIcon />
-          <div className={styles.refreshPrompt}>{getMessages()["preferences.promptForRefresh"]}</div>
+          <div className={styles.refreshPrompt}>{messages["preferences.promptForRefresh"]}</div>
           <div className={styles.warnIconPlaceholder} />
         </div>
         <button
@@ -783,7 +777,7 @@ export default class PreferencesScreen extends Component {
   render() {
     const shouldPromptForRefresh = !!this.props.store.state.preferences.shouldPromptForRefresh;
     return (
-      <WrappedIntlProvider>
+      <IntlProvider locale={lang} messages={messages}>
         <div className={classNames(styles.preferencesPanel)}>
           {shouldPromptForRefresh && (
             <RefreshPrompt
@@ -801,7 +795,7 @@ export default class PreferencesScreen extends Component {
                 onClick={() => {
                   this.setState({ category });
                 }}
-                ariaLabel={`${getMessages()["preferences.selectCategory"]} ${CATEGORY_NAMES.get(category)}`}
+                ariaLabel={`${messages["preferences.selectCategory"]} ${CATEGORY_NAMES.get(category)}`}
                 selected={category === this.state.category}
               />
             ))}
@@ -820,7 +814,7 @@ export default class PreferencesScreen extends Component {
             </div>
           </div>
         </div>
-      </WrappedIntlProvider>
+      </IntlProvider>
     );
   }
 }

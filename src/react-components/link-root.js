@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { FormattedMessage } from "react-intl";
-import { WrappedIntlProvider } from "./wrapped-intl-provider";
+import { IntlProvider, FormattedMessage, addLocaleData } from "react-intl";
+import en from "react-intl/locale-data/en";
+
 import configs from "../utils/configs";
+import { lang, messages } from "../utils/i18n";
 import classNames from "classnames";
 import styles from "../assets/stylesheets/link.scss";
 import { disableiOSZoom } from "../utils/disable-ios-zoom";
@@ -11,6 +13,7 @@ import HeadsetIcon from "../assets/images/generic_vr_headset.svg";
 const MAX_DIGITS = 6;
 const MAX_LETTERS = 4;
 
+addLocaleData([...en]);
 disableiOSZoom();
 const hasTouchEvents = "ontouchstart" in document.documentElement;
 
@@ -156,7 +159,7 @@ class LinkRoot extends Component {
     // Note we use type "tel" for the input due to https://bugzilla.mozilla.org/show_bug.cgi?id=1005603
 
     return (
-      <WrappedIntlProvider>
+      <IntlProvider locale={lang} messages={messages}>
         <div className={styles.link}>
           <div className={styles.linkContents}>
             <a className={styles.logo} href="/">
@@ -286,7 +289,7 @@ class LinkRoot extends Component {
             </div>
           </div>
         </div>
-      </WrappedIntlProvider>
+      </IntlProvider>
     );
   }
 }

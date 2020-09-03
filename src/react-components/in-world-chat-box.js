@@ -69,7 +69,6 @@ class InWorldChatBox extends Component {
             <label
               htmlFor="message-entry-media-input"
               title={"Upload"}
-              role="button"
               className={classNames([
                 styles.messageEntryButton,
                 styles.messageEntryButtonInRoom,
@@ -112,7 +111,6 @@ class InWorldChatBox extends Component {
                 e.target.blur();
               }
             }}
-            aria-label="chat message input"
             placeholder={this.props.discordBridges.length ? `Send to room and ${discordSnippet}...` : "Send to room..."}
           />
           {this.props.enableSpawning && (
@@ -132,7 +130,7 @@ class InWorldChatBox extends Component {
           )}
           <InlineSVGButton
             type="submit"
-            title="send chat message"
+            title={"Submit"}
             className={classNames([
               styles.messageEntryButton,
               styles.messageEntryButtonInRoom,

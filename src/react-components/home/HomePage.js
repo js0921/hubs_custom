@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, addLocaleData } from "react-intl";
+import en from "react-intl/locale-data/en";
 import classNames from "classnames";
 import configs from "../../utils/configs";
 import IfFeature from "../if-feature";
@@ -14,6 +15,8 @@ import { AuthContext } from "../auth/AuthContext";
 import { createAndRedirectToNewHub } from "../../utils/phoenix-utils";
 import { MediaGrid } from "./MediaGrid";
 import { RoomTile } from "./RoomTile";
+
+addLocaleData([...en]);
 
 export function HomePage() {
   const auth = useContext(AuthContext);

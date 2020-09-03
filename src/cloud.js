@@ -3,7 +3,9 @@ import React from "react";
 import "./utils/configs";
 import styles from "./assets/stylesheets/cloud.scss";
 import classNames from "classnames";
-import { WrappedIntlProvider } from "./react-components/wrapped-intl-provider";
+import { IntlProvider, addLocaleData } from "react-intl";
+import en from "react-intl/locale-data/en";
+import { lang, messages } from "./utils/i18n";
 import { Page } from "./react-components/layout/Page";
 import { AuthContextProvider } from "./react-components/auth/AuthContext";
 import Store from "./storage/store";
@@ -11,6 +13,8 @@ import Store from "./storage/store";
 import registerTelemetry from "./telemetry";
 
 registerTelemetry("/cloud", "Hubs Cloud Landing Page");
+
+addLocaleData([...en]);
 
 function HubsCloudPage() {
   return (
@@ -85,11 +89,11 @@ window.APP = { store };
 
 function Root() {
   return (
-    <WrappedIntlProvider>
+    <IntlProvider locale={lang} messages={messages}>
       <AuthContextProvider store={store}>
         <HubsCloudPage />
       </AuthContextProvider>
-    </WrappedIntlProvider>
+    </IntlProvider>
   );
 }
 

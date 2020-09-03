@@ -202,10 +202,8 @@ module.exports = async (env, argv) => {
         appConfig = await fetchAppConfigAndEnvironmentVars();
       }
     } else {
-      if (!env.localDev) {
-        // Use the default app config with all features enabled.
-        appConfig = createDefaultAppConfig();
-      }
+      // Use the default app config with all featured enabled.
+      appConfig = createDefaultAppConfig();
     }
 
     if (env.localDev) {

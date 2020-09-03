@@ -121,9 +121,6 @@ export class WaypointSystem {
     this.scene = scene;
     this.loading = [];
     this.ready = [];
-    this.previousWaypointHash = null;
-    this.initialSpawnHappened = false;
-
     this.waypointForTemplateEl = {};
     this.elementsFromTemplatesFor = {};
     this.eventHandlers = [];
@@ -146,7 +143,14 @@ export class WaypointSystem {
 
   teleportToWaypoint(iconEl, waypointComponent) {
     return function onInteract() {
-      this.moveToWaypoint(waypointComponent, false);
+      this.releaseAnyOccupiedWaypoints();
+      waypointComponent.el.object3D.updateMatrices();
+      this.characterController.shouldLandWhenPossible = true;
+      this.characterController.enqueueWaypointTravelTo(
+        waypointComponent.el.object3D.matrixWorld,
+        false,
+        waypointComponent.data
+      );
     }.bind(this);
   }
   tryTeleportToOccupiableWaypoint(iconEl, waypointComponent) {
@@ -300,20 +304,17 @@ export class WaypointSystem {
     }
     return this.nextMoveToSpawn;
   }
-  moveToWaypoint(waypointComponent, instant) {
-    this.releaseAnyOccupiedWaypoints();
-    waypointComponent.el.object3D.updateMatrices();
-    this.characterController.shouldLandWhenPossible = true;
-    this.characterController.enqueueWaypointTravelTo(
-      waypointComponent.el.object3D.matrixWorld,
-      !window.APP.store.state.preferences.animateWaypointTransitions || instant,
-      waypointComponent.data
-    );
-  }
   moveToUnoccupiableSpawnPoint() {
     const waypointComponent = this.getUnoccupiableSpawnPoint();
     if (waypointComponent) {
-      this.moveToWaypoint(waypointComponent, true);
+      this.releaseAnyOccupiedWaypoints();
+      waypointComponent.el.object3D.updateMatrices();
+      this.characterController.shouldLandWhenPossible = true;
+      this.characterController.enqueueWaypointTravelTo(
+        waypointComponent.el.object3D.matrixWorld,
+        true,
+        waypointComponent.data
+      );
     }
     return waypointComponent;
   }
@@ -322,18 +323,6 @@ export class WaypointSystem {
       this.waitOneTick = false;
       return;
     }
-
-    const hashUpdated = window.location.hash !== "" && this.previousWaypointHash !== window.location.hash;
-
-    if (hashUpdated && this.initialSpawnHappened) {
-      const waypointName = window.location.hash.replace("#", "");
-      const waypoint = this.ready.find(c => c.el.object3D.name === waypointName);
-      if (waypoint) {
-        this.moveToWaypoint(waypoint, this.previousWaypointHash === null);
-      }
-      this.previousWaypointHash = window.location.hash;
-    }
-
     if (!this.currentMoveToSpawn && this.nextMoveToSpawn) {
       this.mightNeedRespawn = false;
       this.currentMoveToSpawn = this.nextMoveToSpawn;
@@ -360,7 +349,6 @@ export class WaypointSystem {
           } else if (waypointComponentOrNull === null) {
             resolvedWaypointOrNull = this.moveToUnoccupiableSpawnPoint();
           }
-          this.initialSpawnHappened = true;
           this.currentMoveToSpawnResolve(resolvedWaypointOrNull);
           this.currentMoveToSpawn = null;
           this.currentMoveToSpawnResolve = null;

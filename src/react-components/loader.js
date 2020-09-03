@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { FormattedMessage } from "react-intl";
-import { WrappedIntlProvider } from "./wrapped-intl-provider";
+import { IntlProvider, FormattedMessage } from "react-intl";
 import UnlessFeature from "./unless-feature";
 
 import configs from "../utils/configs";
+import { lang, messages } from "../utils/i18n";
 import loaderStyles from "../assets/stylesheets/loader.scss";
 
 class Loader extends Component {
@@ -99,7 +99,7 @@ class Loader extends Component {
       </h4>
     );
     return (
-      <WrappedIntlProvider>
+      <IntlProvider locale={lang} messages={messages}>
         <div className="loading-panel">
           <img className="loading-panel__logo" src={configs.image("logo")} />
           <UnlessFeature name="hide_powered_by">
@@ -121,7 +121,7 @@ class Loader extends Component {
             </div>
           </div>
         </div>
-      </WrappedIntlProvider>
+      </IntlProvider>
     );
   }
 }

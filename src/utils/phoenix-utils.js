@@ -12,17 +12,6 @@ export function isLocalClient() {
   return hasReticulumServer() && document.location.host !== configs.RETICULUM_SERVER;
 }
 
-export function hubUrl(hubId) {
-  if (!hubId) {
-    if (isLocalClient()) {
-      hubId = new URLSearchParams(location.search).get("hub_id");
-    } else {
-      hubId = location.pathname.split("/")[1];
-    }
-  }
-  return new URL(isLocalClient() ? `/hub.html?hub_id=${hubId}` : `/${hubId}`, location.href);
-}
-
 const resolverLink = document.createElement("a");
 let reticulumMeta = null;
 let invalidatedReticulumMetaThisSession = false;
