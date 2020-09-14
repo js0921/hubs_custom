@@ -276,7 +276,7 @@ class TopHUD extends Component {
         ) : (
           <div className={cx(uiStyles.uiInteractive, styles.panel)}>
             {tip}
-            {videoSharingButtons}
+            {/* {videoSharingButtons} */}
             <div
               className={cx(styles.iconButton)}
               title={this.props.muted ? "Unmute Mic" : "Mute Mic"}

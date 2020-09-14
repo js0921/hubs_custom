@@ -80,6 +80,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import qsTruthy from "../utils/qs_truthy";
 import { CAMERA_MODE_INSPECT } from "../systems/camera-system";
+import { getLocalstorage } from "../utils/cache-utils";
 const avatarEditorDebug = qsTruthy("avatarEditorDebug");
 
 addLocaleData([...en]);
@@ -364,6 +365,12 @@ class UIRoot extends Component {
         { once: true }
       );
     }
+    const { displayName, avatarId } = this.props.store.state.profile;
+    if(displayName && avatarId) {
+      this.pushHistoryState("entry_step", 'device');
+    } else {
+      this.pushHistoryState("entry_step", 'profile');
+    }
 
     this.playerRig = scene.querySelector("#avatar-rig");
   }
@@ -385,6 +392,7 @@ class UIRoot extends Component {
     this.forceUpdate();
   };
 
+  // sign in dialog for normal sign in
   showContextualSignInDialog = () => {
     const {
       signInMessageId,
@@ -421,6 +429,7 @@ class UIRoot extends Component {
     this.setState({ isSubscribed });
   };
 
+  // toggle favourite for a room
   toggleFavorited = () => {
     this.props.performConditionalSignIn(
       () => this.props.hubChannel.signedIn,
@@ -494,7 +503,7 @@ class UIRoot extends Component {
     await this.props.subscriptions.toggle();
     this.updateSubscribedState();
   };
-
+  // force entry type into vr, 2d or daydream
   handleForceEntry = () => {
     if (!this.props.forcedVREntryType) return;
 
@@ -556,7 +565,7 @@ class UIRoot extends Component {
       secondsRemainingBeforeAutoExit: Infinity
     });
   };
-
+//////////////// change entry flow into various stage such as mic, device and profile etc
   performDirectEntryFlow = async enterInVR => {
     this.setState({ enterInVR, waitingOnAudio: true });
 
@@ -571,11 +580,11 @@ class UIRoot extends Component {
 
     this.setState({ waitingOnAudio: false });
   };
-
+//////////////////// enter into 2d env
   enter2D = async () => {
     await this.performDirectEntryFlow(false);
   };
-
+//////////////////// enter into vr env
   enterVR = async () => {
     if (this.props.forcedVREntryType || this.props.availableVREntryTypes.generic !== VR_DEVICE_AVAILABILITY.maybe) {
       await this.performDirectEntryFlow(true);
@@ -583,7 +592,7 @@ class UIRoot extends Component {
       this.pushHistoryState("modal", "webvr");
     }
   };
-
+///////////////////// enter into daydream
   enterDaydream = async () => {
     await this.performDirectEntryFlow(true);
   };
@@ -1044,10 +1053,12 @@ class UIRoot extends Component {
     this.props.hubChannel.sendEnteringCancelledEvent();
     this.setState({ entering: false });
   };
-
+// entry start panel which is removed from flow
   renderEntryStartPanel = () => {
     const { hasAcceptedProfile, hasChangedName } = this.props.store.state.activity;
-    const promptForNameAndAvatarBeforeEntry = this.props.hubIsBound ? !hasAcceptedProfile : !hasChangedName;
+    const { displayName, avatarId } = this.props.store.state.profile;
+    // const promptForNameAndAvatarBeforeEntry = this.props.hubIsBound ? !hasAcceptedProfile : !hasChangedName;
+    const promptForNameAndAvatarBeforeEntry = (displayName && avatarId);
 
     return (
       <div className={entryStyles.entryPanel}>
@@ -1198,7 +1209,7 @@ class UIRoot extends Component {
       </div>
     );
   };
-
+// device panel to select
   renderDevicePanel = () => {
     return (
       <div className={entryStyles.entryPanel}>
@@ -1257,7 +1268,7 @@ class UIRoot extends Component {
       </div>
     );
   };
-
+// mic panel to select
   renderMicPanel = granted => {
     return (
       <div className="mic-grant-panel">
@@ -1295,7 +1306,7 @@ class UIRoot extends Component {
       </div>
     );
   };
-
+// audio device panel to select
   renderAudioSetupPanel = () => {
     const subtitleId = isMobilePhoneOrVR ? "audio.subtitle-mobile" : "audio.subtitle-desktop";
     const muteOnEntry = this.props.store.state.preferences["muteMicOnEntry"] || false;
@@ -1914,7 +1925,8 @@ class UIRoot extends Component {
                   [inviteStyles.inviteContainerInverted]: this.state.showShareDialog
                 })}
               >
-                {!embed &&
+                {/** this is share button on top of screen */}
+                {/* {!embed &&
                   !streaming && (
                     <button
                       className={classNames({
@@ -1926,7 +1938,7 @@ class UIRoot extends Component {
                     >
                       <FormattedMessage id="entry.share-button" />
                     </button>
-                  )}
+                  )} */}
                 {showChooseSceneButton && (
                   <button
                     className={classNames([styles.chooseSceneButton])}

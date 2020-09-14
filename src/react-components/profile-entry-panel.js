@@ -16,7 +16,9 @@ import StateLink from "./state-link";
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 
 import AvatarPreview from "./avatar-preview";
+import { storeLocalstorage } from "../utils/cache-utils";
 
+// panel for Select profile/avatar
 class ProfileEntryPanel extends Component {
   static propTypes = {
     displayNameOverride: PropTypes.string,
@@ -71,6 +73,8 @@ class ProfileEntryPanel extends Component {
       }
     });
     this.props.finished();
+    storeLocalstorage('visible-name', this.state.displayName);
+    storeLocalstorage('visible-avatarId', this.state.avatarId);
     this.scene.emit("avatar_updated");
   };
 
@@ -131,11 +135,11 @@ class ProfileEntryPanel extends Component {
     return (
       <div className={styles.profileEntry}>
         <div className={styles.close}>
-          <button autoFocus onClick={() => this.props.onClose()}>
+          {/* <button autoFocus onClick={() => this.props.onClose()}>
             <i>
               <FontAwesomeIcon icon={faTimes} />
             </i>
-          </button>
+          </button> */}
         </div>
         <form onSubmit={this.saveStateAndFinish} className={styles.form}>
           <div className={classNames([styles.box])}>
