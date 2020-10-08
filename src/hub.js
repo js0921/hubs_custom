@@ -228,6 +228,10 @@ NAF.options.syncSource = PHOENIX_RELIABLE_NAF;
 const isBotMode = qsTruthy("bot");
 const isTelemetryDisabled = qsTruthy("disable_telemetry");
 const isDebug = qsTruthy("debug");
+const derrivedAvartarId = qs.get("avatarId");
+const firstname = qs.get('firstname');
+const lastname = qs.get('lastname');
+console.log('query--------------------', firstname, lastname);
 
 if (!isBotMode && !isTelemetryDisabled) {
   registerTelemetry("/hub", "Room Landing Page");
@@ -779,6 +783,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     scene.addEventListener("loaded", onSceneLoaded, { once: true });
   }
 
+  if(derrivedAvartarId && firstname && lastname) {
+    console.log('updated name---------------------------------');
+    store.update({ profile: { avatarId: derrivedAvartarId, displayName: firstname + ' ' + lastname }});
+  }
   // If the stored avatar doesn't have a valid src, reset to a legacy avatar.
   const avatarSrc = await getAvatarSrc(store.state.profile.avatarId);
   if (!avatarSrc) {

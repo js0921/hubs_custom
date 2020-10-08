@@ -50,6 +50,10 @@ export default class SceneEntryManager {
     return this._entered;
   };
 
+  sleep = async (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
+  }
+
   enterScene = async (mediaStream, enterInVR, muteOnEntry) => {
     document.getElementById("viewing-camera").removeAttribute("scene-preview-camera");
 
@@ -96,6 +100,9 @@ export default class SceneEntryManager {
     }
 
     if (mediaStream) {
+      while(NAF.connection.adapter === null || NAF.connection.adapter === undefined) {
+        await this.sleep(1000);
+      }
       await NAF.connection.adapter.setLocalMediaStream(mediaStream);
     }
 

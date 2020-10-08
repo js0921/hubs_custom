@@ -80,7 +80,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import qsTruthy from "../utils/qs_truthy";
 import { CAMERA_MODE_INSPECT } from "../systems/camera-system";
-import { getLocalstorage } from "../utils/cache-utils";
+import { getLocalstorage, storeLocalstorage } from "../utils/cache-utils";
 const avatarEditorDebug = qsTruthy("avatarEditorDebug");
 
 addLocaleData([...en]);
@@ -319,7 +319,13 @@ class UIRoot extends Component {
       }
     });
     this.props.scene.addEventListener("action_toggle_ui", () => this.setState({ hide: !this.state.hide }));
-
+    this.props.scene.addEventListener(
+      "environment-scene-loaded",
+      () => {
+        this.storeOriginalSetting();
+      },
+      { once: true }
+    );
     const scene = this.props.scene;
 
     this.props.store.addEventListener("statechanged", this.onStoreChanged);
@@ -365,12 +371,8 @@ class UIRoot extends Component {
         { once: true }
       );
     }
-    const { displayName, avatarId } = this.props.store.state.profile;
-    if(displayName && avatarId) {
-      this.pushHistoryState("entry_step", 'device');
-    } else {
-      this.pushHistoryState("entry_step", 'profile');
-    }
+
+    // this.storeOriginalSetting();
 
     this.playerRig = scene.querySelector("#avatar-rig");
   }
@@ -386,6 +388,36 @@ class UIRoot extends Component {
     this.props.scene.removeEventListener("share_video_disabled", this.onShareVideoDisabled);
     this.props.scene.removeEventListener("share_video_failed", this.onShareVideoFailed);
     this.props.store.removeEventListener("statechanged", this.storeUpdated);
+  }
+
+  storeOriginalSetting = async () => {
+    console.log('recover origina preferences --------------');
+    const { displayName, avatarId } = this.props.store.state.profile;
+    if(displayName && avatarId) {
+      this.pushHistoryState("entry_step", 'mic_grant');
+    } else {
+      this.pushHistoryState("entry_step", 'profile');
+    }
+
+    let mic_granted = getLocalstorage('spinthe-chat-mic-granted');
+    console.log('mic granted in ---------------', mic_granted);
+    console.log('granted check -----------', (mic_granted !== null && mic_granted === 'true'));
+    if(mic_granted !== null && mic_granted === 'true') {
+      console.log('mic granted in ---------------', mic_granted);
+      const { hasAudio } = await this.setMediaStreamToDefault();
+      console.log('has audio ---------------------', hasAudio);
+      if (hasAudio) {
+        let micLabel = getLocalstorage('spinthe-chat-mic-label');
+        if(micLabel !== null) {
+          this.micDeviceIdForMicLabel(micLabel);
+        }
+        this.onAudioReadyButton();
+        storeLocalstorage('spinthe-chat-mic-granted', true);
+      } else {
+        this.beginOrSkipAudioSetup();
+        storeLocalstorage('spinthe-chat-mic-granted', false);
+      }
+    }
   }
 
   storeUpdated = () => {
@@ -599,11 +631,12 @@ class UIRoot extends Component {
 
   micDeviceChanged = async ev => {
     const constraints = { audio: { deviceId: { exact: [ev.target.value] } } };
+    storeLocalstorage('spinthe-chat-mic-label', { deviceId: { exact: [ ev.target.value ]}});
     await this.fetchAudioTrack(constraints);
     await this.setupNewMediaStream();
   };
 
-  setMediaStreamToDefault = async () => {
+  setMediaStreamToDefault = async (deviceId = {}) => {
     let hasAudio = false;
     const { lastUsedMicDeviceId } = this.props.store.state.settings;
 
@@ -611,7 +644,8 @@ class UIRoot extends Component {
     if (lastUsedMicDeviceId) {
       hasAudio = await this.fetchAudioTrack({ audio: { deviceId: { ideal: lastUsedMicDeviceId } } });
     } else {
-      hasAudio = await this.fetchAudioTrack({ audio: {} });
+      console.log('get into here to fetch audio track=---------------------------');
+      hasAudio = await this.fetchAudioTrack({ audio: { deviceId } });
     }
 
     await this.setupNewMediaStream();
@@ -657,6 +691,7 @@ class UIRoot extends Component {
       const mediaStream = audioSystem.outboundStream;
       const audioTrack = newStream.getAudioTracks()[0];
 
+      console.log('set media stream ----------------', mediaStream);
       this.setState({ audioTrack, mediaStream });
 
       if (/Oculus/.test(navigator.userAgent)) {
@@ -710,8 +745,10 @@ class UIRoot extends Component {
 
       if (hasAudio) {
         this.pushHistoryState("entry_step", "mic_granted");
+        storeLocalstorage('spinthe-chat-mic-granted', true);
       } else {
         this.beginOrSkipAudioSetup();
+        storeLocalstorage('spinthe-chat-mic-granted', false);
       }
     } else {
       this.beginOrSkipAudioSetup();
@@ -789,6 +826,7 @@ class UIRoot extends Component {
     // Push the new history state before going into VR, otherwise menu button will take us back
     clearHistoryState(this.props.history);
 
+    console.log('apply with mediastream--------------------------', this.state.mediaStream);
     const muteOnEntry = this.props.store.state.preferences["muteMicOnEntry"] || false;
     await this.props.enterScene(this.state.mediaStream, this.state.enterInVR, muteOnEntry);
 
