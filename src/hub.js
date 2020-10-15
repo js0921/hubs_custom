@@ -229,6 +229,7 @@ const isBotMode = qsTruthy("bot");
 const isTelemetryDisabled = qsTruthy("disable_telemetry");
 const isDebug = qsTruthy("debug");
 const derrivedAvartarId = qs.get("avatarId");
+const oppositeAvatarId = qs.get("oppositeAvatarID");
 const firstname = qs.get('firstname');
 const lastname = qs.get('lastname');
 console.log('query--------------------', firstname, lastname);
