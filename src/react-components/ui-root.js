@@ -113,6 +113,7 @@ const oppositeAvatarId = qs.get("oppositeAvatarID");
 const firstname = qs.get('firstname');
 const lastname = qs.get('lastname');
 const userId = qs.get('uid');
+const oppositeId = qs.get('oppsiteId');
 
 class UIRoot extends Component {
     willCompileAndUploadMaterials = false;
@@ -388,29 +389,22 @@ class UIRoot extends Component {
         let b_flag = false;
 
         this.myInterval = setInterval(() => {
-            if(this.occupantCount() >= 0) {
-
+            if(this.occupantCount() >= 2 ) {
                 this.setState( prevState => ({
                     timeCountForBtn : prevState.timeCountForBtn + 1
                 }))
-
-                console.log('button time log:', this.state.timeCountForBtn);
 
                 this.setState( prevState => ({
                     count: prevState.count - 1
                 }))
                 if ( this.state.count <= 0 ) {
                     clearInterval(this.myInterval);
-                    console.log('time out');
                     this.gameover();
                     window.location.href = "http://localhost:3000/lobby";
                 }
                 if (!b_flag) {
-                    console.log(Date.now());
                     b_flag = true;
                 }
-                
-                console.log('occupante count',this.occupantCount());
     
                 const min = parseInt(this.state.count / 60);
                 var strMin = '0' + min.toString();
@@ -425,19 +419,20 @@ class UIRoot extends Component {
                     timecountString : strMin + ":" + strSec
                 })
             } 
-            // else {
-            //     if (b_flag) {
-            //         console.log('Another user left the room');
-            //         this.gameover();
-            //         window.location.href = "http://localhost:3000/lobby";
-            //         clearInterval(this.myInterval);
-            //     }
-            // }
+            else {
+                if (b_flag) {
+                    console.log('Another user left the room');
+                    this.gameover();
+                    window.location.href = "http://localhost:3000/lobby";
+                    clearInterval(this.myInterval);
+                }
+            }
         },1000)
     }
 
     UNSAFE_componentWillMount() {
         this.props.store.addEventListener("statechanged", this.storeUpdated);
+        this.checkAuth();
         this.startAnswerTimer();
     }
 
@@ -575,6 +570,31 @@ class UIRoot extends Component {
             .then(res => res.json())
             .then(json => {
                 this.setState({answerArr : json})
+            });
+    }
+
+    checkAuth() {
+        console.log('checkauth funtion called:', userId + ":" + oppositeId);
+        const data = {
+            userId : userId,
+            oppositeId : oppositeId
+        }
+        const reqOptions = {
+            method: 'POST',
+            headers: {'Content-Type' : 'application/json'},
+            body: JSON.stringify(data)
+        };
+
+        fetch('http://localhost:3001/api/checkAuth', reqOptions)
+            .then(res => res.json())
+            .then(json => {
+                console.log(json['message']);
+                if( !json['message'].includes('success') ) {
+                    console.log('fake------------------');
+                    window.location.href = "http://localhost:3000";
+                } else {
+                    console.log('check auth true------------------');
+                }
             });
     }
 

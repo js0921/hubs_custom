@@ -232,7 +232,7 @@ const derrivedAvartarId = qs.get("avatarId");
 const oppositeAvatarId = qs.get("oppositeAvatarID");
 const firstname = qs.get('firstname');
 const lastname = qs.get('lastname');
-console.log('query--------------------', firstname, lastname);
+console.log('hub.js: called', firstname, lastname);
 
 if (!isBotMode && !isTelemetryDisabled) {
   registerTelemetry("/hub", "Room Landing Page");
