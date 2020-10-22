@@ -445,7 +445,7 @@ body.vr-mode {
     padding: 10px;
     border-radius: 20px;
 
-	button {
+	button{
 		@extend %action-button-secondary;
 		margin-right: 12px;
 		margin-left: 12px;
@@ -455,9 +455,11 @@ body.vr-mode {
 		border-radius: 50%;
 		background-color: transparent;
 		color: red;
-		margin: 10px;
+    margin: 10px;
+    cursor: not-allowed;
 		font-size: 30px;
-	}
+  }
+  
 }
 
 :local(.switch_button){

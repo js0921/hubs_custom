@@ -218,7 +218,10 @@ class UIRoot extends Component {
         isShowProblem : false,
         count : 300,
         timecountString : '5:00',
-        answerArr : Array()
+        answerArr : Array(),
+        timeCountForBtn : 0,
+        answerBtnColor : "#00FF00",
+        answerBtnCursor: "pointer"
     };
 
     constructor(props) {
@@ -385,7 +388,14 @@ class UIRoot extends Component {
         let b_flag = false;
 
         this.myInterval = setInterval(() => {
-            if(this.occupantCount() === 2) {
+            if(this.occupantCount() >= 0) {
+
+                this.setState( prevState => ({
+                    timeCountForBtn : prevState.timeCountForBtn + 1
+                }))
+
+                console.log('button time log:', this.state.timeCountForBtn);
+
                 this.setState( prevState => ({
                     count: prevState.count - 1
                 }))
@@ -414,14 +424,15 @@ class UIRoot extends Component {
                 this.setState({
                     timecountString : strMin + ":" + strSec
                 })
-            } else {
-                if (b_flag) {
-                    console.log('Another user left the room');
-                    this.gameover();
-                    window.location.href = "http://localhost:3000/lobby";
-                    clearInterval(this.myInterval);
-                }
-            }
+            } 
+            // else {
+            //     if (b_flag) {
+            //         console.log('Another user left the room');
+            //         this.gameover();
+            //         window.location.href = "http://localhost:3000/lobby";
+            //         clearInterval(this.myInterval);
+            //     }
+            // }
         },1000)
     }
 
@@ -1509,6 +1520,15 @@ class UIRoot extends Component {
 
     render() {
 
+        const answerBtnStyles = {
+            buttonStyle: {
+                color: this.state.answerBtnColor,
+                cursor: this.state.answerBtnCursor,
+            }
+        };
+
+        const { buttonStyle } = answerBtnStyles;
+
         const count = this.state.count
 
         const rootStyles = {
@@ -2136,36 +2156,124 @@ class UIRoot extends Component {
 
                         {this.state.isShowProblem && (
                             <div className={styles.problem_panel}>
-                                <button 
-                                onClick={() => this.toggleAnswer(0)}
-                                >
-                                    {this.state.answerArr[0]['name']}
-                                </button>
-                                <button
-                                onClick={() => this.toggleAnswer(1)}
-                                >
-                                    {this.state.answerArr[1]['name']}
-                                </button>
-                                <button
-                                onClick={() => this.toggleAnswer(2)}
-                                >
-                                    {this.state.answerArr[2]['name']}
-                                </button>
-                                <button
-                                onClick={() => this.toggleAnswer(3)}
-                                >
-                                    {this.state.answerArr[3]['name']}
-                                </button>
-                                <button
-                                onClick={() => this.toggleAnswer(4)}
-                                >
-                                    {this.state.answerArr[4]['name']}
-                                </button>
-                                {/* <button
-                                onClick={() => this.toggleAnswer("answer6")}
-                                >
-                                    MATHMETICAIN
-                                </button> */}
+                                
+                                {this.state.timeCountForBtn < 20 && this.state.timeCountForBtn > 0 && (
+                                    <div>
+                                        <button >
+                                            {this.state.answerArr[0]['name']}
+                                        </button>
+                                        <button >
+                                            {this.state.answerArr[1]['name']}
+                                        </button>
+                                        <button >
+                                            {this.state.answerArr[2]['name']}
+                                        </button>
+                                        <button >
+                                            {this.state.answerArr[3]['name']}
+                                        </button>
+                                        <button >
+                                            {this.state.answerArr[4]['name']}
+                                        </button>
+                                    </div>
+                                )}
+                                {this.state.timeCountForBtn >= 20 &&  this.state.timeCountForBtn < 40 &&(
+                                    <div>
+                                        <button style={buttonStyle} onClick={() => this.toggleAnswer(0)}>
+                                            {this.state.answerArr[0]['name']}
+                                        </button>
+                                        <button >
+                                            {this.state.answerArr[1]['name']}
+                                        </button>
+                                        <button >
+                                            {this.state.answerArr[2]['name']}
+                                        </button>
+                                        <button >
+                                            {this.state.answerArr[3]['name']}
+                                        </button>
+                                        <button >
+                                            {this.state.answerArr[4]['name']}
+                                        </button>
+                                    </div>
+                                )}
+                                {this.state.timeCountForBtn >= 40 &&  this.state.timeCountForBtn < 60 &&(
+                                    <div>
+                                        <button style={buttonStyle} onClick={() => this.toggleAnswer(0)}>
+                                            {this.state.answerArr[0]['name']}
+                                        </button>
+                                        <button style={buttonStyle} onClick={() => this.toggleAnswer(1)}>
+                                            {this.state.answerArr[1]['name']}
+                                        </button>
+                                        <button >
+                                            {this.state.answerArr[2]['name']}
+                                        </button>
+                                        <button >
+                                            {this.state.answerArr[3]['name']}
+                                        </button>
+                                        <button >
+                                            {this.state.answerArr[4]['name']}
+                                        </button>
+                                    </div>
+                                )}
+
+                                {this.state.timeCountForBtn >= 60 && this.state.timeCountForBtn < 80 && (
+                                    <div>
+                                        <button style={buttonStyle} onClick={() => this.toggleAnswer(0)}>
+                                            {this.state.answerArr[0]['name']}
+                                        </button>
+                                        <button style={buttonStyle} onClick={() => this.toggleAnswer(1)}>
+                                            {this.state.answerArr[1]['name']}
+                                        </button>
+                                        <button style={buttonStyle} onClick={() => this.toggleAnswer(2)}>
+                                            {this.state.answerArr[2]['name']}
+                                        </button>
+                                        <button >
+                                            {this.state.answerArr[3]['name']}
+                                        </button>
+                                        <button >
+                                            {this.state.answerArr[4]['name']}
+                                        </button>
+                                    </div>
+                                )}
+
+                                {this.state.timeCountForBtn >= 80 && this.state.timeCountForBtn < 100 && (
+                                    <div>
+                                        <button style={buttonStyle} onClick={() => this.toggleAnswer(0)}>
+                                            {this.state.answerArr[0]['name']}
+                                        </button>
+                                        <button style={buttonStyle} onClick={() => this.toggleAnswer(1)}>
+                                            {this.state.answerArr[1]['name']}
+                                        </button>
+                                        <button style={buttonStyle} onClick={() => this.toggleAnswer(2)}>
+                                            {this.state.answerArr[2]['name']}
+                                        </button>
+                                        <button style={buttonStyle} onClick={() => this.toggleAnswer(3)}>
+                                            {this.state.answerArr[3]['name']}
+                                        </button>
+                                        <button >
+                                            {this.state.answerArr[4]['name']}
+                                        </button>
+                                    </div>
+                                )}
+
+                                {this.state.timeCountForBtn >= 100 && (
+                                    <div>
+                                        <button style={buttonStyle} onClick={() => this.toggleAnswer(0)}>
+                                            {this.state.answerArr[0]['name']}
+                                        </button>
+                                        <button style={buttonStyle} onClick={() => this.toggleAnswer(1)}>
+                                            {this.state.answerArr[1]['name']}
+                                        </button>
+                                        <button style={buttonStyle} onClick={() => this.toggleAnswer(2)}>
+                                            {this.state.answerArr[2]['name']}
+                                        </button>
+                                        <button style={buttonStyle} onClick={() => this.toggleAnswer(3)}>
+                                            {this.state.answerArr[3]['name']}
+                                        </button>
+                                        <button style={buttonStyle} onClick={() => this.toggleAnswer(4)}>
+                                            {this.state.answerArr[4]['name']}
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         )}
 
