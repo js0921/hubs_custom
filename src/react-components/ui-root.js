@@ -591,7 +591,7 @@ class UIRoot extends Component {
                 console.log(json['message']);
                 if( !json['message'].includes('success') ) {
                     console.log('fake------------------');
-                    window.location.href = "http://localhost:3000";
+                    // window.location.href = "http://localhost:3000";
                 } else {
                     console.log('check auth true------------------');
                 }
