@@ -112,8 +112,12 @@ import "./components/hubs-text";
 import "./components/billboard";
 import "./components/periodic-full-syncs";
 import "./components/inspect-button";
+import "./components/inspect-pivot-child-selector";
+import "./components/inspect-pivot-offset-from-camera";
+import "./components/optional-alternative-to-not-hide";
 import "./components/set-max-resolution";
 import "./components/avatar-audio-source";
+import "./components/avatar-inspect-collider";
 import { sets as userinputSets } from "./systems/userinput/sets";
 
 import ReactDOM from "react-dom";
@@ -183,14 +187,6 @@ if (isEmbed && !qs.get("embed_token")) {
 }
 
 THREE.Object3D.DefaultMatrixAutoUpdate = false;
-window.APP.quality =
-  window.APP.store.state.preferences.materialQualitySetting === "low"
-    ? "low"
-    : window.APP.store.state.preferences.materialQualitySetting === "high"
-      ? "high"
-      : isMobile || isMobileVR
-        ? "low"
-        : "high";
 
 import "./components/owned-object-limiter";
 import "./components/owned-object-cleanup-timeout";
@@ -228,11 +224,6 @@ NAF.options.syncSource = PHOENIX_RELIABLE_NAF;
 const isBotMode = qsTruthy("bot");
 const isTelemetryDisabled = qsTruthy("disable_telemetry");
 const isDebug = qsTruthy("debug");
-const derrivedAvartarId = qs.get("avatarId");
-const oppositeAvatarId = qs.get("oppositeAvatarID");
-const firstname = qs.get('firstname');
-const lastname = qs.get('lastname');
-console.log('hub.js: called', firstname, lastname);
 
 if (!isBotMode && !isTelemetryDisabled) {
   registerTelemetry("/hub", "Room Landing Page");
@@ -670,7 +661,9 @@ function handleHubChannelJoined(entryManager, hubChannel, messageDispatch, data)
         });
     };
 
+    window.APP.hub = hub;
     updateUIForHub(hub, hubChannel);
+    scene.emit("hub_updated", { hub });
 
     if (!isEmbed) {
       loadEnvironmentAndConnect();
@@ -690,7 +683,14 @@ function handleHubChannelJoined(entryManager, hubChannel, messageDispatch, data)
 
 async function runBotMode(scene, entryManager) {
   const noop = () => {};
-  scene.renderer = { setAnimationLoop: noop, render: noop };
+  const alwaysFalse = () => false;
+  scene.renderer = {
+    setAnimationLoop: noop,
+    render: noop,
+    shadowMap: {},
+    vr: { isPresenting: alwaysFalse },
+    setSize: noop
+  };
 
   while (!NAF.connection.isConnected()) await nextTick();
   entryManager.enterSceneWhenLoaded(new MediaStream(), false);
@@ -764,7 +764,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const scene = document.querySelector("a-scene");
-  scene.setAttribute("shadow", { enabled: window.APP.quality !== "low" }); // Disable shadows on low quality
   scene.renderer.debug.checkShaderErrors = false;
 
   // HACK - Trigger initial batch preparation with an invisible object
@@ -784,10 +783,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     scene.addEventListener("loaded", onSceneLoaded, { once: true });
   }
 
-  if(derrivedAvartarId && firstname && lastname) {
-    console.log('updated name---------------------------------');
-    store.update({ profile: { avatarId: derrivedAvartarId, displayName: firstname + ' ' + lastname }});
-  }
   // If the stored avatar doesn't have a valid src, reset to a legacy avatar.
   const avatarSrc = await getAvatarSrc(store.state.profile.avatarId);
   if (!avatarSrc) {
@@ -1104,14 +1099,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   environmentScene.addEventListener("model-loaded", onFirstEnvironmentLoad);
 
-  environmentScene.addEventListener("model-loaded", () => {
+  environmentScene.addEventListener("model-loaded", ({ detail: { model } }) => {
     if (!scene.is("entered")) {
       setupLobbyCamera();
     }
 
     // This will be run every time the environment is changed (including the first load.)
     remountUI({ environmentSceneLoaded: true });
-    scene.emit("environment-scene-loaded");
+    scene.emit("environment-scene-loaded", model);
 
     // Re-bind the teleporter controls collision meshes in case the scene changed.
     document.querySelectorAll("a-entity[teleporter]").forEach(x => x.components["teleporter"].queryCollisionEntities());
@@ -1169,7 +1164,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       context: {
         mobile: isMobile || isMobileVR,
         embed: isEmbed
-      }
+      },
+      hub_invite_id: qs.get("hub_invite_id")
     };
 
     if (isMobileVR) {
@@ -1556,7 +1552,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   hubPhxChannel.on("hub_refresh", ({ session_id, hubs, stale_fields }) => {
     const hub = hubs[0];
     const userInfo = hubChannel.presence.state[session_id];
+    const displayName = (userInfo && userInfo.metas[0].profile.displayName) || "API";
 
+    window.APP.hub = hub;
     updateUIForHub(hub, hubChannel);
 
     if (stale_fields.includes("scene")) {
@@ -1569,7 +1567,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       addToPresenceLog({
         type: "scene_changed",
-        name: userInfo.metas[0].profile.displayName,
+        name: displayName,
         sceneName: hub.scene ? hub.scene.name : "a custom URL"
       });
     }
@@ -1593,7 +1591,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       addToPresenceLog({
         type: "hub_name_changed",
-        name: userInfo.metas[0].profile.displayName,
+        name: displayName,
         hubName: hub.name
       });
     }
@@ -1601,6 +1599,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (hub.entry_mode === "deny") {
       scene.emit("hub_closed");
     }
+
+    scene.emit("hub_updated", { hub });
   });
 
   hubPhxChannel.on("permissions_updated", () => hubChannel.fetchPermissions());

@@ -43,16 +43,14 @@ export default class SceneEntryManager {
     this.whenSceneLoaded(() => {
       this.rightCursorController.components["cursor-controller"].enabled = false;
       this.leftCursorController.components["cursor-controller"].enabled = false;
+
+      this._setupBlocking();
     });
   };
 
   hasEntered = () => {
     return this._entered;
   };
-
-  sleep = async (milliseconds) => {
-    return new Promise(resolve => setTimeout(resolve, milliseconds))
-  }
 
   enterScene = async (mediaStream, enterInVR, muteOnEntry) => {
     document.getElementById("viewing-camera").removeAttribute("scene-preview-camera");
@@ -81,7 +79,6 @@ export default class SceneEntryManager {
     }
 
     this._setupPlayerRig();
-    this._setupBlocking();
     this._setupKicking();
     this._setupMedia(mediaStream);
     this._setupCamera();
@@ -100,9 +97,6 @@ export default class SceneEntryManager {
     }
 
     if (mediaStream) {
-      while(NAF.connection.adapter === null || NAF.connection.adapter === undefined) {
-        await this.sleep(1000);
-      }
       await NAF.connection.adapter.setLocalMediaStream(mediaStream);
     }
 
