@@ -342,6 +342,59 @@ body.vr-mode {
   pointer-events: auto;
 }
 
+:local(.right_photo_list) {
+  position: absolute;
+  z-index: 1;
+  top: 10px;
+  right: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  pointer-events: none;
+  background-color: blue;
+  opacity: 0.5;
+  width: 250px;
+  border-radius: 20px;
+  img {
+    z-index: 2;
+    padding: 20px;
+    width: 200px;
+    height: 200px;
+    opacity: 1;
+    resize: contain;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+}
+
+:local(.left_photo_list) {
+  position: absolute;
+  z-index: 1;
+  top: 10px;
+  left: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  pointer-events: none;
+  background-color: blue;
+  opacity: 0.5;
+  width: 250px;
+  border-radius: 20px;
+  img {
+    z-index: 2;
+    padding: 20px;
+    width: 200px;
+    height: 200px;
+    opacity: 1;
+    resize: contain;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+}
 
 :local(.custom_button) {
   position: absolute;
@@ -460,6 +513,16 @@ body.vr-mode {
 		font-size: 30px;
   }
   
+}
+
+:local(.clue_panel) {
+  position: relative;
+    padding: 10px;
+
+  span{
+    font-size: 20px;
+    color: white;
+  }
 }
 
 :local(.switch_button){

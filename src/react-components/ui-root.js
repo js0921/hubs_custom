@@ -77,6 +77,12 @@ import { CAMERA_MODE_INSPECT } from "../systems/camera-system";
 import { getLocalstorage, storeLocalstorage } from "../utils/cache-utils";
 const avatarEditorDebug = qsTruthy("avatarEditorDebug");
 
+// const API_URL = process.env.REACT_API_URL;
+// const FRONT_URL = process.env.REACT_FRONT_URL;
+
+// console.log("api_url is: ======================", API_URL)
+// console.log("front_url is: ======================", FRONT_URL)
+
 addLocaleData([...en]);
 
 // This is a list of regexes that match the microphone labels of HMDs.
@@ -108,12 +114,14 @@ const isFirefoxReality = isMobileVR && navigator.userAgent.match(/Firefox/);
 
 const AUTO_EXIT_TIMER_SECONDS = 10;
 const qs = new URLSearchParams(location.search);
+
 const derrivedAvartarId = qs.get("avatarId");
 const oppositeAvatarId = qs.get("oppositeAvatarID");
 const firstname = qs.get('firstname');
 const lastname = qs.get('lastname');
 const userId = qs.get('uid');
-const oppositeId = qs.get('oppsiteId');
+const oppositeId = qs.get('oppositeId');
+const method = qs.get('method');
 
 class UIRoot extends Component {
     willCompileAndUploadMaterials = false;
@@ -220,9 +228,12 @@ class UIRoot extends Component {
         count : 300,
         timecountString : '5:00',
         answerArr : Array(),
+        answerOrigin: Array(),
         timeCountForBtn : 0,
         answerBtnColor : "#00FF00",
-        answerBtnCursor: "pointer"
+        answerBtnCursor: "pointer",
+        clue: "",
+        photoList: null
     };
 
     constructor(props) {
@@ -380,8 +391,13 @@ class UIRoot extends Component {
 
         // this.storeOriginalSetting();
 
+        console.log("qs: ------>>>>>>>>>", qs)
+        console.log("method: ", method)
         this.playerRig = scene.querySelector("#avatar-rig");
         this.getAvatar();
+        this.getClue();
+        this.getPhotosLists();
+
     }
 
     startAnswerTimer = () => {
@@ -400,7 +416,8 @@ class UIRoot extends Component {
                 if ( this.state.count <= 0 ) {
                     clearInterval(this.myInterval);
                     this.gameover();
-                    window.location.href = "http://localhost:3000/lobby";
+                    window.location.href = 'https://snap1.app-spinthe.chat/lobby';
+                    // window.location.href = 'http://localhost:3000/lobby';
                 }
                 if (!b_flag) {
                     b_flag = true;
@@ -423,7 +440,8 @@ class UIRoot extends Component {
                 if (b_flag) {
                     console.log('Another user left the room');
                     this.gameover();
-                    window.location.href = "http://localhost:3000/lobby";
+                    window.location.href = 'https://snap1.app-spinthe.chat/lobby';
+                    // window.location.href = 'http://localhost:3000/lobby';
                     clearInterval(this.myInterval);
                 }
             }
@@ -537,21 +555,35 @@ class UIRoot extends Component {
 
     toggleGuess = () => {
         this.gameover();
-        window.location.href = "http://localhost:3000/lobby";
+        window.location.href = 'https://snap1.app-spinthe.chat/lobby';
+        // window.location.href = 'http://localhost:3000/lobby';
     };
 
     toggleSwitch = () => {
         this.gameover();
-        window.location.href = "http://localhost:3000/lobby";
+        window.location.href = 'https://snap1.app-spinthe.chat/lobby';
+        // window.location.href = 'http://localhost:3000/lobby';
     };
 
     toggleAnswer = (index) => {
         console.log('answer toggle');
-        if (oppositeAvatarId === this.state.answerArr[index]['hubsId']) {
+        if (this.state.answerOrigin[0].name === this.state.answerArr[index].name) {
             this.gameover();
-            window.location.href = "http://localhost:3000/lobby";
+            window.location.href = 'https://snap1.app-spinthe.chat/lobby';
+            // window.location.href = 'http://localhost:3000/lobby';
         } else {
             console.log('InCorrect Answer!!!');
+        }
+    }
+
+    toggleAnswerPhoto = (index) => {
+        console.log("answer toggle photo: ", index)
+        if(this.state.photoList[index].id == oppositeId) {
+            this.gameover()
+            window.location.href = 'https://snap1.app-spinthe.chat/lobby';
+            // window.location.href = 'http://localhost:3000/lobby'
+        } else {
+            console.log("Incorrect Photo!!!")
         }
     }
 
@@ -560,17 +592,84 @@ class UIRoot extends Component {
     };
 
     getAvatar(){
+        console.log("oppositeAvatarId in getAvatar: ", oppositeAvatarId)
+        const data = {
+            oppositeId: oppositeAvatarId
+        }
 
         const reqOptions = {
             method: 'POST',
-            headers: {'Content-Type' : 'application/json'},
+            headers: {
+                'Content-Type' : 'application/json',
+                'http-equiv' : 'Content-Security-Policy',
+                'content' : " default-src 'self'; script-src *.app-spinthe.chat ; base-uri 'self'"
+            },
+            body: JSON.stringify(data)
         };
 
-        fetch('http://localhost:3001/api/getAvatars', reqOptions)
+        // fetch('http://localhost:3001/api/getAvatars', reqOptions)
+        fetch('https://snap1.app-spinthe.chat/api/getAvatars', reqOptions)
             .then(res => res.json())
             .then(json => {
-                this.setState({answerArr : json})
+                console.log(json)
+                console.log("json", json[0].clud.split(','));
+                let newArr = json[0].clud.split(',');
+                for(let i = 0; i<newArr.length; i++) {
+                    newArr[i] = {
+                        name: newArr[i]
+                    }
+                }
+                console.log("newArr", newArr);
+                this.setState({answerOrigin: json})
+                this.setState({answerArr : newArr})
             });
+    }
+
+    getClue() {
+        console.log("oppositeAvatarId in getClue: ", oppositeAvatarId)
+        const data = {
+            oppositeId: oppositeAvatarId
+        }
+        const reqOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json',
+                'http-equiv' : 'Content-Security-Policy',
+                'content' : " default-src 'self'; script-src *.app-spinthe.chat ; base-uri 'self'"
+            },
+            body: JSON.stringify(data)
+        };
+        // fetch('http://localhost:3001/api/getClue', reqOptions)
+        fetch('https://snap1.app-spinthe.chat/api/getClue', reqOptions)
+            .then(res => res.json())
+            .then(json => {
+                this.setState({clue: json[0].clud });
+            })
+    }
+
+    getPhotosLists() {
+        const data = {
+            oppositeId: oppositeId,
+            userId: userId
+        }
+        const reqOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json',
+                'http-equiv' : 'Content-Security-Policy',
+                'content' : " default-src 'self'; script-src *.app-spinthe.chat ; base-uri 'self'"
+            },
+            mode: 'cors',
+            body: JSON.stringify(data)
+        };
+
+        // fetch('http://localhost:3001/api/getPhotoLists', reqOptions)
+        fetch('https://snap1.app-spinthe.chat/api/getPhotoLists', reqOptions)
+            .then(res => res.json())
+            .then(json => {
+                console.log("the result getPhotoLists API >>>>>>", json);
+                this.setState({photoList: json})
+            })
     }
 
     checkAuth() {
@@ -581,17 +680,22 @@ class UIRoot extends Component {
         }
         const reqOptions = {
             method: 'POST',
-            headers: {'Content-Type' : 'application/json'},
+            headers: {
+                'Content-Type' : 'application/json',
+                'http-equiv' : 'Content-Security-Policy',
+                'content' : " default-src 'self'; script-src *.app-spinthe.chat ; base-uri 'self'"
+            },
             body: JSON.stringify(data)
         };
 
-        fetch('http://localhost:3001/api/checkAuth', reqOptions)
+        // fetch('http://localhost:3001/api/checkAuth', reqOptions)
+        fetch('https://snap1.app-spinthe.chat/api/checkAuth', reqOptions)
             .then(res => res.json())
             .then(json => {
                 console.log(json['message']);
                 if( !json['message'].includes('success') ) {
                     console.log('fake------------------');
-                    // window.location.href = "http://localhost:3000";
+                    // window.location.href = "http://localhost:3001";
                 } else {
                     console.log('check auth true------------------');
                 }
@@ -601,6 +705,8 @@ class UIRoot extends Component {
     gameover(){
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+        myHeaders.append("http-equiv", "Content-Security-Policy")
+        myHeaders.append("content", " default-src 'self'; script-src *.app-spinthe.chat ; base-uri 'self'")
 
         var urlencoded = new URLSearchParams();
         urlencoded.append("id", userId);
@@ -611,7 +717,9 @@ class UIRoot extends Component {
         body: urlencoded,
         redirect: 'follow'
         };
-        fetch("http://localhost:3001/api/gameover/id", requestOptions)
+
+        // fetch('http://localhost:3001/api/gameover/id', requestOptions)
+        fetch('https://snap1.app-spinthe.chat/api/gameover/id', requestOptions)
         .then(response => response.text())
         .catch(error => console.log('error', error))
         .finally(
@@ -1704,7 +1812,6 @@ class UIRoot extends Component {
 
         const streamer = getCurrentStreamer();
         const streamerName = streamer && streamer.displayName;
-
         return (
             <ReactAudioContext.Provider value={this.state.audioContext}>
                 <IntlProvider locale={lang} messages={messages}>
@@ -2165,19 +2272,24 @@ class UIRoot extends Component {
                         )} */}
 
 
-                        {entered && (
-                            <div className={styles.nagCornerButton}>
-                                <button
-                                onClick={() => this.toggleProblem()}
-                                >CLUES
-                                </button>
-                            </div>
-                        )}
+                        {
+                            method == 'avatar' ?
+                            entered && (
+                                <div className={styles.nagCornerButton}>
+                                    <button
+                                    onClick={() => this.toggleProblem()}
+                                    >CLUES
+                                    </button>
+                                </div>
+                            ) : null
+                        }
 
                         {this.state.isShowProblem && (
                             <div className={styles.problem_panel}>
-                                
-                                {this.state.timeCountForBtn < 20 && this.state.timeCountForBtn > 0 && (
+                                {/* <div className={styles.clue_panel}>
+                                    <span>{this.state.clue}</span>
+                                </div> */}
+                                {this.state.timeCountForBtn < 20 && this.state.timeCountForBtn >= 0 && (
                                     <div>
                                         <button >
                                             {this.state.answerArr[0]['name']}
@@ -2305,6 +2417,8 @@ class UIRoot extends Component {
                             </div>
                         </div>
                         )}
+
+                        
                         
                         {entered && (
                             <div className={styles.switch_button}>
@@ -2316,15 +2430,67 @@ class UIRoot extends Component {
                         </div>
                         )}
                         
-
-                        {entered && (
-                            <div className={styles.custom_button}>
-                                <button
-                                onClick={() => this.toggleGuess()}
-                                >
-                                    GUESSED IT!</button>
-                            </div>
-                        )}
+                        {
+                            (method == 'photo' && this.state.photoList) ? <>
+                                <div className={styles.right_photo_list}>
+                                    <img
+                                        src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/${this.state.photoList[0].id}/${this.state.photoList[0].photoURL}`}
+                                        alt={'image'}
+                                        onClick={()=>{
+                                            this.toggleAnswerPhoto(0)
+                                        }}
+                                    />
+                                    <img
+                                        src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/${this.state.photoList[1].id}/${this.state.photoList[1].photoURL}`}
+                                        alt={'image'}
+                                        onClick={()=>{
+                                            this.toggleAnswerPhoto(1)
+                                        }}
+                                    />
+                                    <img
+                                        src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/${this.state.photoList[2].id}/${this.state.photoList[2].photoURL}`}
+                                        alt={'image'}
+                                        onClick={()=>{
+                                            this.toggleAnswerPhoto(2)
+                                        }}
+                                    />
+                                </div> 
+                                <div className={styles.left_photo_list}>
+                                    <img
+                                        src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/${this.state.photoList[3].id}/${this.state.photoList[3].photoURL}`}
+                                        alt={'image'}
+                                        onClick={()=>{
+                                            this.toggleAnswerPhoto(3)
+                                        }}
+                                    />
+                                    <img
+                                        src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/${this.state.photoList[4].id}/${this.state.photoList[4].photoURL}`}
+                                        alt={'image'}
+                                        onClick={()=>{
+                                            this.toggleAnswerPhoto(4)
+                                        }}
+                                    />
+                                    <img
+                                        src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/${this.state.photoList[5].id}/${this.state.photoList[5].photoURL}`}
+                                        alt={'image'}
+                                        onClick={()=>{
+                                            this.toggleAnswerPhoto(5)
+                                        }}
+                                    />
+                                </div>
+                                </>: null
+                        }
+                        {
+                            method == 'avatar' ? 
+                                entered && (
+                                    <div className={styles.custom_button}>
+                                        <button
+                                        onClick={() => this.toggleGuess()}
+                                        >
+                                            GUESSED IT!</button>
+                                    </div>)
+                                    : null
+                        }
                     </div>
                 </IntlProvider>
             </ReactAudioContext.Provider>
