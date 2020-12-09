@@ -253,7 +253,12 @@ module.exports = async (env, argv) => {
       cloud: path.join(__dirname, "src", "cloud.js"),
       signin: path.join(__dirname, "src", "signin.js"),
       verify: path.join(__dirname, "src", "verify.js"),
-      "whats-new": path.join(__dirname, "src", "whats-new.js")
+      "whats-new": path.join(__dirname, "src", "whats-new.js"),
+      index1: path.join(__dirname, "src", "index1.js"),
+      msignin: path.join(__dirname, "src", "msignin.js"),
+      msignup: path.join(__dirname, "src", "msignup.js"),
+      mdashboard: path.join(__dirname, "src", "mdashboard.js"),
+      mwaiting: path.join(__dirname, "src", "mwaiting.js")
     },
     output: {
       filename: "assets/js/[name]-[chunkhash].js",
@@ -276,7 +281,12 @@ module.exports = async (env, argv) => {
           { from: /^\/discord/, to: "/discord.html" },
           { from: /^\/cloud/, to: "/cloud.html" },
           { from: /^\/verify/, to: "/verify.html" },
-          { from: /^\/whats-new/, to: "/whats-new.html" }
+          { from: /^\/whats-new/, to: "/whats-new.html" },
+          { from: /^\/index1/, to: "/index1.html" },
+          { from: /^\/msignin/, to: "/msignin.html" },
+          { from: /^\/msignup/, to: "/msignup.html" },
+          { from: /^\/mdashboard/, to: "/mdashboard.html" },
+          { from: /^\/mwaiting/, to: "/mwaiting.html" }
         ]
       },
       before: function(app) {
@@ -470,6 +480,51 @@ module.exports = async (env, argv) => {
         filename: "index.html",
         template: path.join(__dirname, "src", "index.html"),
         chunks: ["support", "index"],
+        chunksSortMode: "manual",
+        minify: {
+          removeComments: false
+        }
+      }),
+      new HTMLWebpackPlugin({
+        filename: "index1.html",
+        template: path.join(__dirname, "src", "index1.html"),
+        chunks: ["support", "index1"],
+        chunksSortMode: "manual",
+        minify: {
+          removeComments: false
+        }
+      }),
+      new HTMLWebpackPlugin({
+        filename: "msignin.html",
+        template: path.join(__dirname, "src", "msignin.html"),
+        chunks: ["support", "msignin"],
+        chunksSortMode: "manual",
+        minify: {
+          removeComments: false
+        }
+      }),
+      new HTMLWebpackPlugin({
+        filename: "msignup.html",
+        template: path.join(__dirname, "src", "msignup.html"),
+        chunks: ["support", "msignup"],
+        chunksSortMode: "manual",
+        minify: {
+          removeComments: false
+        }
+      }),
+      new HTMLWebpackPlugin({
+        filename: "mdashboard.html",
+        template: path.join(__dirname, "src", "mdashboard.html"),
+        chunks: ["support", "mdashboard"],
+        chunksSortMode: "manual",
+        minify: {
+          removeComments: false
+        }
+      }),
+      new HTMLWebpackPlugin({
+        filename: "mwaiting.html",
+        template: path.join(__dirname, "src", "mwaiting.html"),
+        chunks: ["support", "mwaiting"],
         chunksSortMode: "manual",
         minify: {
           removeComments: false

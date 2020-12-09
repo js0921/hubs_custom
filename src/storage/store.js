@@ -153,6 +153,28 @@ export const SCHEMA = {
           args: { type: "object" }
         }
       }
+    },
+
+    mvpActions: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        id: { type: ["null", "number"] },
+        role: { type: ["null", "number"] },
+        firstname: { type: ["null", "string"] },
+        lastname: { type: ["null", "string"] },
+        mtoken: { type: ["null", "string"] },
+        waitingMethod: { type: "string" },
+        photoURL: {type: ["null", "string"]},
+        waitingAmount: { type: "number" },
+        guestSignupError: { type: ["null", "string"] },
+        loginError: {type: ["null", "string"]},
+        signupError: {type: ["null", "string"]},
+        isLoggedIn: {type: "boolean"},
+        isSignedUp: {type: "boolean"},
+        isWaiting: {type: "boolean"},
+        uploadFailed: {type: "boolean"}
+      }
     }
   },
 
@@ -169,7 +191,8 @@ export const SCHEMA = {
     uploadPromotionTokens: { $ref: "#/definitions/uploadPromotionTokens" },
     creatorAssignmentTokens: { $ref: "#/definitions/creatorAssignmentTokens" },
     embedTokens: { $ref: "#/definitions/embedTokens" },
-    onLoadActions: { $ref: "#/definitions/onLoadActions" }
+    onLoadActions: { $ref: "#/definitions/onLoadActions" },
+    mvpActions: { $ref: "#/definitions/mvpActions" }
   },
 
   additionalProperties: false
@@ -201,7 +224,8 @@ export default class Store extends EventTarget {
       creatorAssignmentTokens: [],
       embedTokens: [],
       onLoadActions: [],
-      preferences: {}
+      preferences: {},
+      mvpActions: {}
     });
 
     this._shouldResetAvatarOnInit = false;
