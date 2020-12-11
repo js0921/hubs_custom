@@ -258,7 +258,8 @@ module.exports = async (env, argv) => {
       msignin: path.join(__dirname, "src", "msignin.js"),
       msignup: path.join(__dirname, "src", "msignup.js"),
       mdashboard: path.join(__dirname, "src", "mdashboard.js"),
-      mwaiting: path.join(__dirname, "src", "mwaiting.js")
+      mwaiting: path.join(__dirname, "src", "mwaiting.js"),
+      mlobby: path.join(__dirname, "src", "mlobby.js")
     },
     output: {
       filename: "assets/js/[name]-[chunkhash].js",
@@ -286,7 +287,8 @@ module.exports = async (env, argv) => {
           { from: /^\/msignin/, to: "/msignin.html" },
           { from: /^\/msignup/, to: "/msignup.html" },
           { from: /^\/mdashboard/, to: "/mdashboard.html" },
-          { from: /^\/mwaiting/, to: "/mwaiting.html" }
+          { from: /^\/mwaiting/, to: "/mwaiting.html" },
+          { from: /^\/mlobby/, to: "/mlobby.html" },
         ]
       },
       before: function(app) {
@@ -525,6 +527,15 @@ module.exports = async (env, argv) => {
         filename: "mwaiting.html",
         template: path.join(__dirname, "src", "mwaiting.html"),
         chunks: ["support", "mwaiting"],
+        chunksSortMode: "manual",
+        minify: {
+          removeComments: false
+        }
+      }),
+      new HTMLWebpackPlugin({
+        filename: "mlobby.html",
+        template: path.join(__dirname, "src", "mlobby.html"),
+        chunks: ["support", "mlobby"],
         chunksSortMode: "manual",
         minify: {
           removeComments: false

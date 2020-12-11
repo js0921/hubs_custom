@@ -173,7 +173,13 @@ export const SCHEMA = {
         isLoggedIn: {type: "boolean"},
         isSignedUp: {type: "boolean"},
         isWaiting: {type: "boolean"},
-        uploadFailed: {type: "boolean"}
+        uploadFailed: {type: "boolean"},
+        assignRoomURL: {type: ["null", "string"]},
+        assignAvatarId: {type: ["null", "string"]},
+        assignoppositeAvatarID: {type: ["null", "string"]},
+        assignuid: {type: ["null", "number"]},
+        assignOppositeUserId: {type: ["null", "number"]},
+        isAssigned: {type: "boolean"}
       }
     }
   },

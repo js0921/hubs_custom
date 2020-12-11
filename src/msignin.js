@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import ReactDOM from "react-dom";
 import "./assets/stylesheets/styles.scss";
 import Store from './storage/store';
+import { connectToAlerts, emitIdentity } from './storage/socketUtil';
 import { 
   setJwtToken, 
   setCurrentUserId,
@@ -15,6 +16,10 @@ function Msignin() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loginError, setLoginError] = useState('')
+
+  React.useEffect(() => {
+    connectToAlerts()
+  }, [])
 
   const onSubmit = () => {
     if(email === '') {
@@ -60,6 +65,8 @@ function Msignin() {
             isLoggedIn: true,
             loginError: null
           }})
+          emitIdentity(json.id);
+          window.location.href = '/mdashboard';
         } else {
           setLoginError(json.message)
 
@@ -70,7 +77,6 @@ function Msignin() {
             loginError: json.message
           }})  
         }
-        window.location.href = '/mdashboard'
       })
       .catch(error => {
         console.log(error)

@@ -3,15 +3,70 @@ import ReactDOM from "react-dom";
 import { Link } from "react-router-dom";
 
 import "./assets/stylesheets/styles.scss";
-import { getMethod } from './react-components/utils';
+import { getMethod, getOppositeUserId } from './react-components/utils';
+import { connectToAlerts, emitIdentity, emitWaiting } from './storage/socketUtil';
 import Store from './storage/store';
 
 const store = new Store();
 window.APP = { store };
 
 function Mwaiting() {
-    // const method = getMethod();
-    const method = store.state.mvpActions.waitingMethod
+    // const method = store.state.mvpActions.waitingMethod
+    // const firstname = store.state.mvpActions.firstname;
+    // const lastname = store.state.mvpActions.lastname;
+    // const isAssigned = store.state.mvpActions.isAssigned;
+    // const assignRoomURL = store.state.mvpActions.assignRoomURL;
+    // const avatarId = store.state.mvpActions.assignAvatarId;
+    // const oppositeAvatarID = store.state.mvpActions.assignoppositeAvatarID;
+    // const uid = store.state.mvpActions.assignuid;
+    // const oppositeId = store.state.mvpActions.assignOppositeUserId;
+
+    const [method, setMethod] = useState(null)
+    const [firstname, setFirstname] = useState(null)
+    const [lastname, setLastname] = useState(null)
+    const [isAssigned, setIsAssigned] = useState(false)
+    const [assignRoomURL, setAssignRoomURL] = useState(null)
+    const [avatarId, setAvatarId] = useState(null)
+    const [oppositeAvatarID, setOppositeAvatarID] = useState(null)
+    const [uid, setUid] = useState(null)
+    const [oppositeId, setOppositeId] = useState(null)
+
+
+    React.useEffect(() => {
+      connectToAlerts()
+      emitIdentity(store.state.mvpActions.id);
+      emitWaiting(store.state.mvpActions.id);
+
+      window.addEventListener("isAssigned", () => {
+        console.log("assign event from socket")
+        setMethod(store.state.mvpActions.waitingMethod)
+        setFirstname(store.state.mvpActions.firstname)
+        setLastname(store.state.mvpActions.lastname)
+        setIsAssigned(store.state.mvpActions.isAssigned)
+        setAssignRoomURL(store.state.mvpActions.assignRoomURL)
+        setAvatarId(store.state.mvpActions.assignAvatarId)
+        setOppositeAvatarID(store.state.mvpActions.assignoppositeAvatarID)
+        setUid(store.state.mvpActions.assignuid)
+        setOppositeId(store.state.mvpActions.assignOppositeUserId)
+      }, false)
+    }, [])
+
+    React.useEffect(() => {
+      if (assignRoomURL && avatarId && isAssigned && oppositeAvatarID && uid && oppositeId && method) {
+        console.log("assigned!!!")
+        getOppositeUserId(oppositeId);
+        window.location.href = assignRoomURL + `&avatarId=${avatarId}`  + `&oppositeAvatarID=${oppositeAvatarID}` + `&firstname=${firstname}` + `&lastname=${lastname}` + `&uid=${uid}` + `&oppositeId=${oppositeId}` + `&method=${method}`;
+      }
+    }, [
+      assignRoomURL,
+      avatarId,
+      isAssigned,
+      oppositeAvatarID,
+      uid,
+      oppositeId,
+      method
+    ])
+
 
     if (method == 'simple') {
         return (
@@ -24,16 +79,6 @@ function Mwaiting() {
               To play more games, create friend lists and filter<br />
               possible matches, please login<br />
             </p>
-            <br /><br />
-            {/* {
-              currentUser.role == 0 ?
-                <div className="form-wrapper">
-                  <div className="form-item">
-                    <Link className="login-button" to='/login'>Login</Link>
-                    <div className="link-button" onClick={e => window.location.href = '/msignin'}>Login</div>
-                  </div>
-                </div> : null
-            } */}
           </div>
         )
       } else if (method == 'photo') {

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import "./assets/stylesheets/styles.scss";
 import { LoadingAnimation } from '../src/components/LoadingAnimation'
 import Store from './storage/store';
+import { connectToAlerts, emitIdentity } from './storage/socketUtil';
 import { 
   setJwtToken, 
   getJwtToken, 
@@ -21,8 +22,16 @@ function Root() {
   const [lastname, setLastname] = useState('')
   const [email, setEmail] = useState('')
   const [validationError, setValidationError] = useState('')
+  const [mtoken, setMtoken] = useState(null);
+  const [guestSignupError, setGuestSignupError] = useState(null);
+  const [waitingAmount, setWaitingAmount] = useState();
 
   React.useEffect(() => {
+    connectToAlerts()
+    window.addEventListener("waitingAmount", (e) => {
+      setWaitingAmount(e.detail);
+    }, false)
+
     const reqOptions = {
       method: 'GET',
       headers: {
@@ -36,6 +45,7 @@ function Root() {
       .then(json => {
         if(json.success) {
           store.update({mvpActions: {waitingAmount: json.amount} })
+          setWaitingAmount(json.amount)        
         } else {
           console.log("error")
         }
@@ -43,13 +53,10 @@ function Root() {
   }, [])
 
   React.useEffect(() => {
-    if(store.state.mvpActions.mtoken || store.state.mvpActions.guestSignupError) {
+    if(mtoken || guestSignupError) {
       setLoading(false)
     }
-  }, [
-    store.state.mvpActions.mtoken,
-    store.state.mvpActions.guestSignupError
-  ])
+  }, [ mtoken, guestSignupError ])
   
   const handleEnterBasicInfo = () => {
     if(firstname !== '' && lastname !== '' && email !== '') {
@@ -97,7 +104,11 @@ function Root() {
           mtoken: json.token,
           guestSignupError: null,
           waitingMethod: 'simple'
-        } })
+        }})
+        setMtoken(json.token)
+        setGuestSignupError(null)
+
+        emitIdentity(json.id)
         window.location.href = '/mwaiting';
       })
       .catch(error => {
@@ -109,10 +120,10 @@ function Root() {
           role: null,
           mtoken: null,
           guestSignupError: error.message,
-        } })
+        }})
+        setMtoken(null)
+        setGuestSignupError(null)
       })
-    
-
   }
 
   if(isLoading) {
@@ -129,7 +140,7 @@ function Root() {
       </div>
       <div className="page-title">Welcome!</div>
       <div className="queue-status">
-        There are currently <span>{store.state.mvpActions.waitingAmount}</span> people in the queue.
+        There are currently <span>{waitingAmount}</span> people in the queue.
       </div>
       <div className="form-wrapper">
       <div className="form-item">

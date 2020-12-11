@@ -416,8 +416,8 @@ class UIRoot extends Component {
                 if ( this.state.count <= 0 ) {
                     clearInterval(this.myInterval);
                     this.gameover();
-                    // window.location.href = 'https://snap1.app-spinthe.chat/lobby';
-                    window.location.href = 'http://localhost:3000/lobby';
+                    // window.location.href = 'https://snap1.app-spinthe.chat/mlobby';
+                    window.location.href = 'mlobby';
                 }
                 if (!b_flag) {
                     b_flag = true;
@@ -440,8 +440,8 @@ class UIRoot extends Component {
                 if (b_flag) {
                     console.log('Another user left the room');
                     this.gameover();
-                    // window.location.href = 'https://snap1.app-spinthe.chat/lobby';
-                    window.location.href = 'http://localhost:3000/lobby';
+                    // window.location.href = 'https://snap1.app-spinthe.chat/mlobby';
+                    window.location.href = '/mlobby';
                     clearInterval(this.myInterval);
                 }
             }
@@ -555,22 +555,22 @@ class UIRoot extends Component {
 
     toggleGuess = () => {
         this.gameover();
-        // window.location.href = 'https://snap1.app-spinthe.chat/lobby';
-        window.location.href = 'http://localhost:3000/lobby';
+        // window.location.href = 'https://snap1.app-spinthe.chat/mlobby';
+        window.location.href = 'mlobby';
     };
 
     toggleSwitch = () => {
         this.gameover();
-        // window.location.href = 'https://snap1.app-spinthe.chat/lobby';
-        window.location.href = 'http://localhost:3000/lobby';
+        // window.location.href = 'https://snap1.app-spinthe.chat/mlobby';
+        window.location.href = 'mlobby';
     };
 
     toggleAnswer = (index) => {
         console.log('answer toggle');
         if (this.state.answerOrigin[0].name === this.state.answerArr[index].name) {
             this.gameover();
-            // window.location.href = 'https://snap1.app-spinthe.chat/lobby';
-            window.location.href = 'http://localhost:3000/lobby';
+            // window.location.href = 'https://snap1.app-spinthe.chat/mlobby';
+            window.location.href = '/mlobby';
         } else {
             console.log('InCorrect Answer!!!');
         }
@@ -580,8 +580,8 @@ class UIRoot extends Component {
         console.log("answer toggle photo: ", index)
         if(this.state.photoList[index].id == oppositeId) {
             this.gameover()
-            // window.location.href = 'https://snap1.app-spinthe.chat/lobby';
-            window.location.href = 'http://localhost:3000/lobby'
+            // window.location.href = 'https://snap1.app-spinthe.chat/mlobby';
+            window.location.href = '/mlobby'
         } else {
             console.log("Incorrect Photo!!!")
         }
@@ -607,7 +607,7 @@ class UIRoot extends Component {
             body: JSON.stringify(data)
         };
 
-        fetch('http://localhost:3001/api/getAvatars', reqOptions)
+        fetch('https://snap1.app-spinthe.chat/api/getAvatars', reqOptions)
         // fetch('https://snap1.app-spinthe.chat/api/getAvatars', reqOptions)
             .then(res => res.json())
             .then(json => {
@@ -639,7 +639,7 @@ class UIRoot extends Component {
             },
             body: JSON.stringify(data)
         };
-        fetch('http://localhost:3001/api/getClue', reqOptions)
+        fetch('https://snap1.app-spinthe.chat/api/getClue', reqOptions)
         // fetch('https://snap1.app-spinthe.chat/api/getClue', reqOptions)
             .then(res => res.json())
             .then(json => {
@@ -663,7 +663,7 @@ class UIRoot extends Component {
             body: JSON.stringify(data)
         };
 
-        fetch('http://localhost:3001/api/getPhotoLists', reqOptions)
+        fetch('https://snap1.app-spinthe.chat/api/getPhotoLists', reqOptions)
         // fetch('https://snap1.app-spinthe.chat/api/getPhotoLists', reqOptions)
             .then(res => res.json())
             .then(json => {
@@ -688,14 +688,14 @@ class UIRoot extends Component {
             body: JSON.stringify(data)
         };
 
-        fetch('http://localhost:3001/api/checkAuth', reqOptions)
+        fetch('https://snap1.app-spinthe.chat/api/checkAuth', reqOptions)
         // fetch('https://snap1.app-spinthe.chat/api/checkAuth', reqOptions)
             .then(res => res.json())
             .then(json => {
                 console.log(json['message']);
                 if( !json['message'].includes('success') ) {
                     console.log('fake------------------');
-                    // window.location.href = "http://localhost:3001";
+                    // window.location.href = "https://snap1.app-spinthe.chat";
                 } else {
                     console.log('check auth true------------------');
                 }
@@ -718,7 +718,7 @@ class UIRoot extends Component {
         redirect: 'follow'
         };
 
-        fetch('http://localhost:3001/api/gameover/id', requestOptions)
+        fetch('https://snap1.app-spinthe.chat/api/gameover/id', requestOptions)
         // fetch('https://snap1.app-spinthe.chat/api/gameover/id', requestOptions)
         .then(response => response.text())
         .catch(error => console.log('error', error))
@@ -2434,7 +2434,8 @@ class UIRoot extends Component {
                             (method == 'photo' && this.state.photoList) ? <>
                                 <div className={styles.right_photo_list}>
                                     <img
-                                        src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/${this.state.photoList[0].id}/${this.state.photoList[0].photoURL}`}
+                                        src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/` +
+                                        `${this.state.photoList[0].id}/${this.state.photoList[0].photoURL}`}
                                         alt={'image'}
                                         onClick={()=>{
                                             this.toggleAnswerPhoto(0)

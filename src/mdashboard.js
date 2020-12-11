@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import "./assets/stylesheets/styles.scss";
 import { setMethod } from './react-components/utils'
 import Store from "./storage/store";
+import { connectToAlerts, emitIdentity } from './storage/socketUtil';
 import { 
   setJwtToken, 
   getJwtToken, 
@@ -18,8 +19,34 @@ function Mdashboard() {
   const [photoFile, setPhotoFile] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [uploadFail, setUploadFail] = useState(false);
+  const [waitingAmount, setWaitingAmount] = useState();
   React.useEffect(() => {
     setCurrentUser(store.state.mvpActions)
+  }, [])
+
+  React.useEffect(() => {
+    connectToAlerts()
+    window.addEventListener("waitingAmount", (e) => {
+      setWaitingAmount(e.detail);
+    }, false)
+    const reqOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'http-equiv': 'Content-Security-Policy'
+      },
+      mode: 'cors'
+    }
+    fetch('https://snap1.app-spinthe.chat/api/getWaiting', reqOptions)
+      .then(res => res.json())
+      .then(json => {
+        if(json.success) {
+          store.update({mvpActions: {waitingAmount: json.amount} })
+          setWaitingAmount(json.amount)        
+        } else {
+          console.log("error")
+        }
+      })
   }, [])
 
   React.useEffect(()=>{
@@ -114,7 +141,7 @@ function Mdashboard() {
             waitingMethod: 'simple'
           }})
         }
-        window.location.href = './mwaiting';
+        window.location.href = '/mwaiting';
       })
       .catch(error => {
         console.log(error)
@@ -160,7 +187,7 @@ function Mdashboard() {
         <div className="column" >
           <div className="left-page-wrapeer">
             <div className="queue-status">
-              There are currently <span>{}</span> people in the queue.
+              There are currently <span>{waitingAmount}</span> people in the queue.
             </div>
             <div className="info-head">
               <div className={"upload-photo"} onClick={e => onUploadPhoto(e)}>
