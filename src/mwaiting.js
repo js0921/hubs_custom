@@ -55,7 +55,12 @@ function Mwaiting() {
       if (assignRoomURL && avatarId && isAssigned && oppositeAvatarID && uid && oppositeId && method) {
         console.log("assigned!!!")
         getOppositeUserId(oppositeId);
-        window.location.href = assignRoomURL + `&avatarId=${avatarId}`  + `&oppositeAvatarID=${oppositeAvatarID}` + `&firstname=${firstname}` + `&lastname=${lastname}` + `&uid=${uid}` + `&oppositeId=${oppositeId}` + `&method=${method}`;
+
+        // local
+        // window.location.href = assignRoomURL + `&avatarId=${avatarId}`  + `&oppositeAvatarID=${oppositeAvatarID}` + `&firstname=${firstname}` + `&lastname=${lastname}` + `&uid=${uid}` + `&oppositeId=${oppositeId}` + `&method=${method}`;
+
+        // server
+        window.location.href = assignRoomURL + `?avatarId=${avatarId}`  + `&oppositeAvatarID=${oppositeAvatarID}` + `&firstname=${firstname}` + `&lastname=${lastname}` + `&uid=${uid}` + `&oppositeId=${oppositeId}` + `&method=${method}`;
       }
     }, [
       assignRoomURL,
