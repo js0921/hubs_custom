@@ -38,7 +38,16 @@ export function connectToAlerts() {
                     assignOppositeUserId: payload.message.oppositeId,
                     isAssigned: true
                 }})
-                window.dispatchEvent(new CustomEvent("isAssigned"))
+                window.dispatchEvent(new CustomEvent("isAssigned", {
+                    "detail": {
+                        "assignRoomURL": payload.message.roomURL,
+                        "assignAvatarId": payload.message.avatarId,
+                        "assignoppositeAvatarID": payload.message.oppositeAvatarID,
+                        "assignuid": payload.message.uid,
+                        "assignOppositeUserId": payload.message.oppositeId,
+                        "isAssigned": true
+                    }
+                }))
             } catch (e) {
                 console.log(e)
             }

@@ -15,6 +15,9 @@ function Mlobby() {
     const mtoken = store.state.mvpActions.mtoken;
     const waitingMethod = store.state.mvpActions.waitingMethod;
     React.useEffect(() => {
+        connectToAlerts()
+    }, [])
+    React.useEffect(() => {
         if(mtoken) {
             /////
             const data = {
@@ -43,7 +46,7 @@ function Mlobby() {
                         isLoggedIn: true,
                         loginError: null
                     }})
-                    // emitIdentity(json.id);
+                    emitIdentity(json.id)
                     store.update({mvpActions: {
                         isWaiting: true
                     }})

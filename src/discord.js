@@ -8,6 +8,7 @@ import { lang, messages } from "./utils/i18n";
 import { AuthContextProvider } from "./react-components/auth/AuthContext";
 import { SignInPage } from "./react-components/auth/SignInPage";
 import "./assets/stylesheets/globals.scss";
+import { connectToAlerts, emitIdentity, emitWaiting } from './storage/socketUtil';
 
 registerTelemetry("/signin", "Hubs Sign In Page");
 
@@ -18,9 +19,13 @@ function Root() {
   const [isMlobby, setIsMlobby] = React.useState(false);
 
   React.useEffect(() => {
+    connectToAlerts()
+  }, [])
+
+  React.useEffect(() => {
     const qs = new URLSearchParams(location.search);
     const mtoken = store.state.mvpActions.mtoken;
-
+    
     if(qs.has('mlobby')) {
       setIsMlobby(true)
       if(mtoken) {
@@ -51,10 +56,11 @@ function Root() {
                     isLoggedIn: true,
                     loginError: null
                 }})
-                // emitIdentity(json.id);
+
                 store.update({mvpActions: {
                     isWaiting: true
                 }})
+                emitIdentity(json.id);
                 window.location.href = '/link';
             })
             .catch( error => {
@@ -64,9 +70,9 @@ function Root() {
                 }})
             })
         /////
-    } else {
-        window.location.href = "/";
-    }
+      } else {
+          window.location.href = "/";
+      }
     }
   }, [])
 
