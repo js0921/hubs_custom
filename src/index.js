@@ -12,6 +12,7 @@ import {
   setOppositeUserId
 } from './react-components/utils';
 import {createAndRedirectToNewHub} from '../src/utils/phoenix-utils';
+import Waiting from './Waiting';
 
 const store = new Store()
 window.APP = { store }
@@ -26,6 +27,7 @@ function Root() {
   const [mtoken, setMtoken] = useState(null);
   const [guestSignupError, setGuestSignupError] = useState(null);
   const [waitingAmount, setWaitingAmount] = useState();
+  const [isLink, setIsLink] = useState(false);
 
   React.useEffect(() => {
     const qs = new URLSearchParams(location.search);
@@ -127,7 +129,8 @@ function Root() {
         setGuestSignupError(null)
 
         emitIdentity(json.id)
-        window.location.href = '/link';
+        // window.location.href = '/link';
+        setIsLink(true);
       })
       .catch(error => {
         console.log(error)
@@ -141,7 +144,12 @@ function Root() {
         }})
         setMtoken(null)
         setGuestSignupError(null)
+        setIsLink(false);
       })
+  }
+
+  if(isLink) {
+    return <Waiting method={store.state.mvpActions.waitingMethod} />
   }
 
   if(isLoading) {

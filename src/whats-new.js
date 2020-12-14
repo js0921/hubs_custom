@@ -5,12 +5,7 @@ import "./assets/stylesheets/styles.scss";
 import { setMethod } from './react-components/utils'
 import Store from "./storage/store";
 import { connectToAlerts, emitIdentity } from './storage/socketUtil';
-import { 
-  setJwtToken, 
-  getJwtToken, 
-  setCurrentUserId, 
-  setOppositeUserId
-} from './react-components/utils';
+import Waiting from './Waiting';
 
 const store = new Store();
 window.APP = { store };
@@ -20,12 +15,15 @@ function Mdashboard() {
   const [currentUser, setCurrentUser] = useState(null);
   const [uploadFail, setUploadFail] = useState(false);
   const [waitingAmount, setWaitingAmount] = useState();
+  const [isLink, setIsLink] = useState(false);
+
   React.useEffect(() => {
+    connectToAlerts()
+    emitIdentity(store.state.mvpActions.id);
     setCurrentUser(store.state.mvpActions)
   }, [])
 
   React.useEffect(() => {
-    connectToAlerts()
     window.addEventListener("waitingAmount", (e) => {
       setWaitingAmount(e.detail);
     }, false)
@@ -141,7 +139,8 @@ function Mdashboard() {
             waitingMethod: 'simple'
           }})
         }
-        window.location.href = '/link';
+        // window.location.href = '/link';
+        setIsLink(true);
       })
       .catch(error => {
         console.log(error)
@@ -149,6 +148,7 @@ function Mdashboard() {
         store.update({mvpActions: {
           isWaiting: false
         }})
+        setIsLink(false)
       })
   }
 
@@ -168,138 +168,143 @@ function Mdashboard() {
     enterWaitingRequest('photo')
   }
 
-
-  return (
-    <>
-      <div className="row">
-        <div style={{
-          textAlign: 'center',
-          width: '100%',
-          paddingTop: 20,
-          color: '#464E5F',
-          fontSize: 35,
-          fontWeight: 'bold'
-        }}>
-          <span>USER DASHBOARD</span>
+  if(isLink) {
+    return <Waiting method={store.state.mvpActions.waitingMethod} />
+  } else {
+    return (
+      <>
+        <div className="row">
+          <div style={{
+            textAlign: 'center',
+            width: '100%',
+            paddingTop: 20,
+            color: '#464E5F',
+            fontSize: 35,
+            fontWeight: 'bold'
+          }}>
+            <span>USER DASHBOARD</span>
+          </div>
         </div>
-      </div>
-      <div className="row">
-        <div className="column" >
-          <div className="left-page-wrapeer">
-            <div className="queue-status">
-              There are currently <span>{waitingAmount}</span> people in the queue.
-            </div>
-            <div className="info-head">
-              <div className={"upload-photo"} onClick={e => onUploadPhoto(e)}>
-                {
-                  photoFile ?
-                    <img
-                      src={URL.createObjectURL(photoFile)}
-                      alt={photoFile.name}
-                      style={{ width: '100%', height: '100%', resize: 'contain' }}
-                    /> : 
-                    (
-                      currentUser?.photoURL ?
+        <div className="row">
+          <div className="column" >
+            <div className="left-page-wrapeer">
+              <div className="queue-status">
+                There are currently <span>{waitingAmount}</span> people in the queue.
+              </div>
+              <div className="info-head">
+                <div className={"upload-photo"} onClick={e => onUploadPhoto(e)}>
+                  {
+                    photoFile ?
                       <img
-                        src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/${currentUser.id}/${currentUser.photoURL}`}
-                        alt={'avatar'}
+                        src={URL.createObjectURL(photoFile)}
+                        alt={photoFile.name}
                         style={{ width: '100%', height: '100%', resize: 'contain' }}
                       /> : 
-                      <label style={{ position: "absolute" }}>Upload your photo</label>
-                    )
-                    
-                }
-                <input id="upload" type="file" onChange={(event) => {
-                  onChangePhoto(event)
-                }} />
-              </div>
-              <div className="info-body">
-                <div className="success-rate">
-                  SUCCESS<br /> RATE
+                      (
+                        currentUser?.photoURL ?
+                        <img
+                          src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/${currentUser.id}/${currentUser.photoURL}`}
+                          alt={'avatar'}
+                          style={{ width: '100%', height: '100%', resize: 'contain' }}
+                        /> : 
+                        <label style={{ position: "absolute" }}>Upload your photo</label>
+                      )
+                      
+                  }
+                  <input id="upload" type="file" onChange={(event) => {
+                    onChangePhoto(event)
+                  }} />
                 </div>
-                <div className="total-points">
-                  TOTAL<br /> POINTS
+                <div className="info-body">
+                  <div className="success-rate">
+                    SUCCESS<br /> RATE
+                  </div>
+                  <div className="total-points">
+                    TOTAL<br /> POINTS
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className='left-page-wrapeer'>
+              <div className='friend-body'>
+                <div className="friend-input">
+                  I am a ...
+                </div>
+                <div className="friend-input">
+                  I am a ...
+                </div>
+                <div className="friend-input">
+                  I am a ...
+                </div>
+                <div className="friend-input">
+                  I am a ...
                 </div>
               </div>
             </div>
           </div>
-          <div className='left-page-wrapeer'>
-            <div className='friend-body'>
-              <div className="friend-input">
-                I am a ...
+          <div className="columnMiddle">
+  
+            <div className="waitingBtn" onClick={e => onEnterSimple()}>
+              <span>
+                SIMPLE<br />
+                CHAT
+              </span>
+            </div>
+  
+            <div className="waitingBtn" onClick={e => onEnter()} >
+              <span>
+                GUESS<br />
+                MY <br />
+                AVATAR
+              </span>
+            </div>
+  
+            <div className="waitingBtn" onClick={e => onEnterGuess()} >
+              <span>
+                GUESS<br />
+                MY<br />
+                PHOTO
+              </span>
+            </div>
+  
+          </div>
+          <div className="column" >
+            <div className="login-wrapper">
+              <a href="#">Logout</a>
+            </div>
+            <div className='left-page-wrapeer'>
+              <div className='friend-title'>
+                FRIEND LIST
               </div>
-              <div className="friend-input">
-                I am a ...
-              </div>
-              <div className="friend-input">
-                I am a ...
-              </div>
-              <div className="friend-input">
-                I am a ...
+              <div className='friend-body'>
+                <div className="friend-input">
+                  Friend1
+                </div>
+                <div className="friend-input">
+                  Friend2
+                </div>
+                <div className="friend-input">
+                  Friend3
+                </div>
+                <div className="friend-input">
+                  Friend4
+                </div>
+                <div className="friend-input">
+                  Friend5
+                </div>
+                <div className="friend-input">
+                  Friend6
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="columnMiddle">
+      </>
+    );
+  }
+  }
 
-          <div className="waitingBtn" onClick={e => onEnterSimple()}>
-            <span>
-              SIMPLE<br />
-              CHAT
-            </span>
-          </div>
 
-          <div className="waitingBtn" onClick={e => onEnter()} >
-            <span>
-              GUESS<br />
-              MY <br />
-              AVATAR
-            </span>
-          </div>
-
-          <div className="waitingBtn" onClick={e => onEnterGuess()} >
-            <span>
-              GUESS<br />
-              MY<br />
-              PHOTO
-            </span>
-          </div>
-
-        </div>
-        <div className="column" >
-          <div className="login-wrapper">
-            <a href="#">Logout</a>
-          </div>
-          <div className='left-page-wrapeer'>
-            <div className='friend-title'>
-              FRIEND LIST
-            </div>
-            <div className='friend-body'>
-              <div className="friend-input">
-                Friend1
-              </div>
-              <div className="friend-input">
-                Friend2
-              </div>
-              <div className="friend-input">
-                Friend3
-              </div>
-              <div className="friend-input">
-                Friend4
-              </div>
-              <div className="friend-input">
-                Friend5
-              </div>
-              <div className="friend-input">
-                Friend6
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
 
 
 document.addEventListener("DOMContentLoaded", async () => {
