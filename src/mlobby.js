@@ -47,7 +47,7 @@ function Mlobby() {
                     store.update({mvpActions: {
                         isWaiting: true
                     }})
-                    window.location.href = '/mwaiting';
+                    window.location.href = '/link';
                 })
                 .catch( error => {
                     console.log(error);

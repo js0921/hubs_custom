@@ -77,7 +77,7 @@ export function Header() {
             </a>
           </div>
         ) : (
-          <a href="/signin" rel="noreferrer noopener">
+          <a href="/discord" rel="noreferrer noopener">
             <FormattedMessage id="sign-in.in" />
           </a>
         )}

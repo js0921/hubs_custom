@@ -33,7 +33,7 @@ export function HomePage() {
 
     // Support legacy sign in urls.
     if (qs.has("sign_in")) {
-      const redirectUrl = new URL("/signin", window.location);
+      const redirectUrl = new URL("/discord", window.location);
       redirectUrl.search = location.search;
       window.location = redirectUrl;
     } else if (qs.has("auth_topic")) {

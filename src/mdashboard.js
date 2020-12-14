@@ -61,7 +61,7 @@ function Mdashboard() {
 
   const getPhotoURL = (file) => {
     const mtoken = store.state.mvpActions.mtoken;
-    if(mtoken == null) window.location.href = '/msignup';
+    if(mtoken == null) window.location.href = '/cloud';
     let formData = new FormData();
     formData.append("file", file);
 
@@ -141,7 +141,7 @@ function Mdashboard() {
             waitingMethod: 'simple'
           }})
         }
-        window.location.href = '/mwaiting';
+        window.location.href = '/link';
       })
       .catch(error => {
         console.log(error)

@@ -11,6 +11,7 @@ import {
   setCurrentUserId, 
   setOppositeUserId
 } from './react-components/utils';
+import {createAndRedirectToNewHub} from '../src/utils/phoenix-utils';
 
 const store = new Store()
 window.APP = { store }
@@ -25,6 +26,23 @@ function Root() {
   const [mtoken, setMtoken] = useState(null);
   const [guestSignupError, setGuestSignupError] = useState(null);
   const [waitingAmount, setWaitingAmount] = useState();
+
+  React.useEffect(() => {
+    const qs = new URLSearchParams(location.search);
+    if(qs.has("sign_in")) {
+      const redirectUrl = new URL("/discord", window.location);
+      redirectUrl.search = location.search;
+      window.location = redirectUrl;
+    } else if(qs.has("auth_topic")) {
+      const redirectUrl = new URL("/verify", window.location);
+      redirectUrl.search = location.search;
+      window.location = redirectUrl;
+    }
+
+    if (qs.has("new")) {
+      createAndRedirectToNewHub(null, null, true);
+    }
+  }, [])
 
   React.useEffect(() => {
     connectToAlerts()
@@ -109,7 +127,7 @@ function Root() {
         setGuestSignupError(null)
 
         emitIdentity(json.id)
-        window.location.href = '/mwaiting';
+        window.location.href = '/link';
       })
       .catch(error => {
         console.log(error)
@@ -136,7 +154,7 @@ function Root() {
     <div className="page-wrapper">
       <div className="login-wrapper">
         {/* <Link className="link-button" to='/login'>Login</Link> */}
-        <div className="link-button" onClick={e => window.location.href = '/msignin'}>Login</div>
+        <div className="link-button" onClick={e => window.location.href = '/signin'}>Login</div>
       </div>
       <div className="page-title">Welcome!</div>
       <div className="queue-status">

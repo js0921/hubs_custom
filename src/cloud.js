@@ -1,102 +1,123 @@
+import React, {useState} from "react";
 import ReactDOM from "react-dom";
-import React from "react";
-import "./utils/configs";
-import styles from "./assets/stylesheets/cloud.scss";
-import classNames from "classnames";
-import { IntlProvider, addLocaleData } from "react-intl";
-import en from "react-intl/locale-data/en";
-import { lang, messages } from "./utils/i18n";
-import { Page } from "./react-components/layout/Page";
-import { AuthContextProvider } from "./react-components/auth/AuthContext";
-import Store from "./storage/store";
+import { Link } from "react-router-dom";
+import "./assets/stylesheets/styles.scss";
+import Store from './storage/store';
+import { 
+  setJwtToken, 
+  setCurrentUserId,
+} from './react-components/utils';
 
-import registerTelemetry from "./telemetry";
+const store = new Store()
+window.APP = { store }
 
-registerTelemetry("/cloud", "Hubs Cloud Landing Page");
+function Msignup() {
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [firstname, setFirstname] = useState('')
+    const [lastname, setLastname] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
+    const [error, setError] = useState('')
 
-addLocaleData([...en]);
+    const onSubmit = () => {
+        if(password !== confirmPassword) {
+          setError('Password is not matching, please input passwords again')
+          setPassword('')
+          setConfirmPassword('')
+          return
+        }
+        if(firstname === '') {
+          setError('Please input first name')
+          return;
+        }
+        if(lastname === '') {
+          setError('Please input last name');
+          return;
+        }
+        if(email === '') {
+          setError('Please input email');
+          return;
+        }
+        setError('')
 
-function HubsCloudPage() {
+        const data = {
+          email: email,
+          password: password,
+          firstname: firstname,
+          lastname: lastname
+        }
+
+        const reqOptions = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'http-equiv': 'Content-Security-Plicy'
+          },
+          mode: 'cors',
+          body: JSON.stringify(data)
+        }
+
+        fetch('https://snap1.app-spinthe.chat/api/signup', reqOptions)
+          .then(res => res.json())
+          .then(json => {
+            setCurrentUserId(json.id)
+
+            // SIGNUP_SUCCESS
+            store.update({mvpActions: {
+              isSignedUp: true,
+              signupError: null
+            }})
+            window.location.href = '/signin';
+          })
+          .catch(error => {
+            console.log(error)
+
+            // SIGNUP_FAILURE
+            store.update({mvpActions: {
+              isSignedUp: false,
+              signupError: error.message
+            }})            
+          })
+        }
+
   return (
-    <Page>
-      <div className={styles.hero}>
-        <section className={styles.colLg}>
-          <div className={classNames(styles.hideLgUp, styles.centerLg)}>
-            <h1>Introducing Hubs Cloud</h1>
-          </div>
-          <div className={classNames(styles.heroMedia, styles.centerLg)}>
-            <iframe
-              src="https://player.vimeo.com/video/412377556?app_id=122963"
-              allow="autoplay; fullscreen"
-              allowFullScreen=""
-              frameBorder="0"
-            />
-          </div>
-          <div className={styles.heroContent}>
-            <h1 className={classNames(styles.hideLgDown, styles.centerLg)}>Introducing Hubs Cloud</h1>
-            <p className={styles.centerLg}>
-              Hubs Cloud creates and manages all of the AWS resources needed to host your own immersive spaces from your
-              company or organization’s own account. Bring your own domain or use Route53 to create a new site, running
-              on a single EC2 instance or scaled up to multiple servers for greater system-wide concurrency. Easily
-              customize your platform with your own branding, upload your own 3D content, or select from the vast array
-              of avatars and scenes licensed under Creative Commons for the Hubs platform.
-            </p>
-            <h3 className={styles.center}>Get it today on the AWS Marketplace</h3>
-            <div className={classNames(styles.row, styles.colLg, styles.centerLg)}>
-              <a className={styles.primaryButton} href="https://aws.amazon.com/marketplace/pp/B084RZH56R">
-                Get Hubs Cloud Personal
-              </a>
-              <a className={styles.primaryButton} href="https://aws.amazon.com/marketplace/pp/B084WNGRRP">
-                Get Hubs Cloud Enterprise
-              </a>
-            </div>
-            <div className={classNames(styles.getStarted, styles.center)}>
-              <a href="https://hubs.mozilla.com/docs/hubs-cloud-aws-quick-start.html">Quick Start Guide</a>
-            </div>
-          </div>
-        </section>
+    <div className="page-wrapper">
+      <div className="login-wrapper">
+        {/* <Link className="link-button" to="/login">Login</Link> */}
+        <div className="link-button" onClick={e => window.location.href = '/signin'}>Login</div>
       </div>
-      <section className={classNames(styles.features, styles.colLg, styles.centerLg)}>
-        <div className={styles.center}>
-          <h3>Do-It-Yourself Events</h3>
-          <p>
-            With Hubs Cloud, you can enable your own virtual events infrastructure by tailoring your deployment to meet
-            your own needs for uptime, concurrency, and account needs.
-          </p>
+      <div className="page-title">Create Account!</div>
+      <div className="form-wrapper">
+        <div className="form-item">
+          <input type="text" className="form-input" placeholder="First Name" onChange={e => setFirstname(e.currentTarget.value)} value={firstname} required /> 
         </div>
-        <div className={styles.center}>
-          <h3>Self-Hosted Infrastructure</h3>
-          <p>
-            With Hubs Cloud, your deployment is on your own organization’s infrastructure, keeping your sensitive data
-            private and secure within an AWS account your team owns.
-          </p>
+        <div className="form-item">
+          <input type="text" className="form-input" placeholder="Last Name" onChange={e => setLastname(e.currentTarget.value)} value={lastname} required /> 
         </div>
-        <div className={styles.center}>
-          <h3>Usage-Based Pricing</h3>
-          <p>
-            Your cost to run Hubs Cloud will be dependent on the size of your deployed instances, bandwidth, and storage
-            used. All billing is handled through AWS, so you’ll get visibility into charges at every step of the
-            process.
-          </p>
+        <div className="form-item">
+          <input type="email" className="form-input" placeholder="E-mail Address" onChange={e => setEmail(e.currentTarget.value)} value={email} required /> 
         </div>
-      </section>
-    </Page>
+        <div className="form-item">
+          <input type="password" className="form-input" placeholder="Password" onChange={e => setPassword(e.currentTarget.value)} value={password} required /> 
+        </div>
+        <div className="form-item">
+          <input type="password" className="form-input" placeholder="Confirm Password" onChange={e => setConfirmPassword(e.currentTarget.value)} value={confirmPassword} required />
+        </div>
+        <div className="form-item">
+          <span className="error-alert">{error}</span>
+        </div>
+        <div className="form-item">
+          <span className="error-alert">{}</span>
+        </div>
+        <div className="form-item">
+          <input type="button" className="form-button" value="Enter" onClick={(e) => onSubmit()} />
+        </div>
+      </div>
+    </div>
   );
 }
 
-const store = new Store();
-window.APP = { store };
-
-function Root() {
-  return (
-    <IntlProvider locale={lang} messages={messages}>
-      <AuthContextProvider store={store}>
-        <HubsCloudPage />
-      </AuthContextProvider>
-    </IntlProvider>
-  );
-}
 
 document.addEventListener("DOMContentLoaded", () => {
-  ReactDOM.render(<Root />, document.getElementById("ui-root"));
+  ReactDOM.render(<Msignup />, document.getElementById("ui-root"));
 });

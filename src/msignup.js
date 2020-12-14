@@ -67,7 +67,7 @@ function Msignup() {
               isSignedUp: true,
               signupError: null
             }})
-            window.location.href = '/msignin';
+            window.location.href = '/signin';
           })
           .catch(error => {
             console.log(error)
@@ -84,7 +84,7 @@ function Msignup() {
     <div className="page-wrapper">
       <div className="login-wrapper">
         {/* <Link className="link-button" to="/login">Login</Link> */}
-        <div className="link-button" onClick={e => window.location.href = '/msignin'}>Login</div>
+        <div className="link-button" onClick={e => window.location.href = '/signin'}>Login</div>
       </div>
       <div className="page-title">Create Account!</div>
       <div className="form-wrapper">

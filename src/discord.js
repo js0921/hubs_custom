@@ -1,77 +1,90 @@
+import React from "react";
 import ReactDOM from "react-dom";
-import React, { Component } from "react";
-import "./utils/configs";
-import { IntlProvider, FormattedMessage, addLocaleData } from "react-intl";
-import styles from "./assets/stylesheets/discord.scss";
-import discordBotLogo from "./assets/images/discord-bot-logo.png";
-import discordBotVideoMP4 from "./assets/video/discord.mp4";
-import discordBotVideoWebM from "./assets/video/discord.webm";
-
+import { IntlProvider } from "react-intl";
 import registerTelemetry from "./telemetry";
-
-registerTelemetry("/discord", "Discord Landing Page");
-
-import en from "react-intl/locale-data/en";
+import Store from "./storage/store";
+import "./utils/theme";
 import { lang, messages } from "./utils/i18n";
+import { AuthContextProvider } from "./react-components/auth/AuthContext";
+import { SignInPage } from "./react-components/auth/SignInPage";
+import "./assets/stylesheets/globals.scss";
 
-addLocaleData([...en]);
-const inviteUrl = "https://forms.gle/GGPgarSuY5WaTNCT8";
+registerTelemetry("/signin", "Hubs Sign In Page");
 
-class DiscordLanding extends Component {
-  componentDidMount() {}
+const store = new Store();
+window.APP = { store };
 
-  render() {
+function Root() {
+  const [isMlobby, setIsMlobby] = React.useState(false);
+
+  React.useEffect(() => {
+    const qs = new URLSearchParams(location.search);
+    const mtoken = store.state.mvpActions.mtoken;
+
+    if(qs.has('mlobby')) {
+      setIsMlobby(true)
+      if(mtoken) {
+        /////
+        const data = {
+            token: mtoken,
+            currentURL: 'lobby'
+        }
+        const reqOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'http-equiv': 'Content-Security-Policy'
+            },
+            mode: 'cors',
+            body: JSON.stringify(data)
+        }
+        fetch('https://snap1.app-spinthe.chat/api/authCheck', reqOptions)
+            .then(res => res.json())
+            .then(json => {
+                store.update({mvpActions: {
+                    id: json.id,
+                    role: json.role,
+                    firstname: json.firstname,
+                    lastname: json.lastname,
+                    mtoken: json.token,
+                    photoURL: json.photoURL,
+                    isLoggedIn: true,
+                    loginError: null
+                }})
+                // emitIdentity(json.id);
+                store.update({mvpActions: {
+                    isWaiting: true
+                }})
+                window.location.href = '/link';
+            })
+            .catch( error => {
+                console.log(error);
+                store.update({mvpActions: {
+                    isWaiting: false
+                }})
+            })
+        /////
+    } else {
+        window.location.href = "/";
+    }
+    }
+  }, [])
+
+  if(isMlobby) {
     return (
+      <div className="page-spinner">
+        <span>loading...</span>
+      </div>
+    )
+  } else {
+    return ( 
       <IntlProvider locale={lang} messages={messages}>
-        <div className={styles.ui}>
-          <div className={styles.header}>
-            <div className={styles.headerLinks}>
-              <a href="/" rel="noreferrer noopener">
-                Try Hubs
-              </a>
-              <a href="https://discord.gg/wHmY4nd" rel="noreferrer noopener">
-                <FormattedMessage id="discord.community_link" />
-              </a>
-            </div>
-          </div>
-          <div className={styles.content}>
-            <div className={styles.heroPane}>
-              <div className={styles.heroMessage}>
-                <div className={styles.discordLogo}>
-                  <img src={discordBotLogo} />
-                </div>
-                <div className={styles.primaryTagline}>
-                  <FormattedMessage id="discord.primary_tagline" />
-                </div>
-                <div className={styles.secondaryTagline}>
-                  <FormattedMessage id="discord.secondary_tagline" />
-                </div>
-                <div className={styles.actionButtons}>
-                  <a href={inviteUrl} className={styles.downloadButton}>
-                    <div>
-                      <FormattedMessage id="discord.contact_us" />
-                    </div>
-                  </a>
-                </div>
-              </div>
-              <div className={styles.heroSplash}>
-                <video playsInline loop autoPlay muted>
-                  <source src={discordBotVideoMP4} type="video/mp4" />
-                  <source src={discordBotVideoWebM} type="video/webm" />
-                </video>
-                <div className={styles.splashTagline}>
-                  <FormattedMessage id="discord.splash_tag" />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className={styles.bg} />
-        </div>
+        <AuthContextProvider store={store}>
+          <SignInPage />
+        </AuthContextProvider>
       </IntlProvider>
     );
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  ReactDOM.render(<DiscordLanding />, document.getElementById("ui-root"));
-});
+ReactDOM.render(<Root />, document.getElementById("ui-root"));

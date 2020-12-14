@@ -66,7 +66,7 @@ function Msignin() {
             loginError: null
           }})
           emitIdentity(json.id);
-          window.location.href = '/mdashboard';
+          window.location.href = '/whats-new';
         } else {
           setLoginError(json.message)
 
@@ -86,7 +86,7 @@ function Msignin() {
   return (
     <div className="page-wrapper">
       <div className="login-wrapper">
-        <div className="link-button" onClick={e => window.location.href = '/msignup'}>Signup</div>
+        <div className="link-button" onClick={e => window.location.href = '/cloud'}>Signup</div>
       </div>
       <div className="page-title">Login</div>
       <div className="form-wrapper">

@@ -417,7 +417,7 @@ class UIRoot extends Component {
                     clearInterval(this.myInterval);
                     this.gameover();
                     // window.location.href = 'https://snap1.app-spinthe.chat/mlobby';
-                    window.location.href = 'mlobby';
+                    window.location.href = '/discord?mlobby';
                 }
                 if (!b_flag) {
                     b_flag = true;
@@ -441,7 +441,7 @@ class UIRoot extends Component {
                     console.log('Another user left the room');
                     this.gameover();
                     // window.location.href = 'https://snap1.app-spinthe.chat/mlobby';
-                    window.location.href = '/mlobby';
+                    window.location.href = '/discord?mlobby';
                     clearInterval(this.myInterval);
                 }
             }
@@ -556,13 +556,13 @@ class UIRoot extends Component {
     toggleGuess = () => {
         this.gameover();
         // window.location.href = 'https://snap1.app-spinthe.chat/mlobby';
-        window.location.href = 'mlobby';
+        window.location.href = '/discord?mlobby';
     };
 
     toggleSwitch = () => {
         this.gameover();
         // window.location.href = 'https://snap1.app-spinthe.chat/mlobby';
-        window.location.href = 'mlobby';
+        window.location.href = '/discord?mlobby';
     };
 
     toggleAnswer = (index) => {
@@ -570,7 +570,7 @@ class UIRoot extends Component {
         if (this.state.answerOrigin[0].name === this.state.answerArr[index].name) {
             this.gameover();
             // window.location.href = 'https://snap1.app-spinthe.chat/mlobby';
-            window.location.href = '/mlobby';
+            window.location.href = '/discord?mlobby';
         } else {
             console.log('InCorrect Answer!!!');
         }
@@ -581,7 +581,7 @@ class UIRoot extends Component {
         if(this.state.photoList[index].id == oppositeId) {
             this.gameover()
             // window.location.href = 'https://snap1.app-spinthe.chat/mlobby';
-            window.location.href = '/mlobby'
+            window.location.href = '/discord?mlobby'
         } else {
             console.log("Incorrect Photo!!!")
         }

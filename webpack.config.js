@@ -284,6 +284,7 @@ module.exports = async (env, argv) => {
           { from: /^\/verify/, to: "/verify.html" },
           { from: /^\/whats-new/, to: "/whats-new.html" },
           { from: /^\/index1/, to: "/index1.html" },
+          { from: /^\/link/, to: "/link.html" },
           { from: /^\/msignin/, to: "/msignin.html" },
           { from: /^\/msignup/, to: "/msignup.html" },
           { from: /^\/mdashboard/, to: "/mdashboard.html" },
