@@ -557,3 +557,40 @@ body.vr-mode {
     	width: 200px;
 	}
 }
+
+:local(.alert_container){
+	position: absolute;
+    z-index: 5;
+    top: 150px;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    width: 250px;
+    height: 35px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background: #2F80ED;
+    border-radius: 25px;
+    pointer-events: auto;
+    transition: opacity 0.15s linear;
+    padding-left: 15px;
+    padding-right: 15px;
+  a {
+    padding-right: 15px;
+    font-size: 1em;
+    color: white;
+    font-weight: bolder;
+  }
+  span {
+    font-size: 1em;
+    padding-left: 15px;
+  }
+  :local(.alert_content) {
+    pointer-events: auto;
+    font-size: 1em;
+    color: white;
+    text-align: center;
+  }
+}

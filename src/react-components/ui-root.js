@@ -233,7 +233,9 @@ class UIRoot extends Component {
         answerBtnColor : "#00FF00",
         answerBtnCursor: "pointer",
         clue: "",
-        photoList: null
+        photoList: null,
+        isVisible: false,
+        content: ''
     };
 
     constructor(props) {
@@ -554,9 +556,9 @@ class UIRoot extends Component {
     };
 
     toggleGuess = () => {
-        this.gameover();
+        // this.gameover();
         // window.location.href = 'https://snap1.app-spinthe.chat/mlobby';
-        window.location.href = '/discord?mlobby';
+        // window.location.href = '/discord?mlobby';
     };
 
     toggleSwitch = () => {
@@ -568,10 +570,12 @@ class UIRoot extends Component {
     toggleAnswer = (index) => {
         console.log('answer toggle');
         if (this.state.answerOrigin[0].name === this.state.answerArr[index].name) {
-            this.gameover();
+            // this.gameover();
             // window.location.href = 'https://snap1.app-spinthe.chat/mlobby';
-            window.location.href = '/discord?mlobby';
+            // window.location.href = '/discord?mlobby';
+            this.setState({isVisible: true, content: 'Correct Answer!'})
         } else {
+            this.setState({isVisible: true, content: 'Incorrect Answer!'})
             console.log('InCorrect Answer!!!');
         }
     }
@@ -579,10 +583,12 @@ class UIRoot extends Component {
     toggleAnswerPhoto = (index) => {
         console.log("answer toggle photo: ", index)
         if(this.state.photoList[index].id == oppositeId) {
-            this.gameover()
+            // this.gameover()
             // window.location.href = 'https://snap1.app-spinthe.chat/mlobby';
-            window.location.href = '/discord?mlobby'
+            // window.location.href = '/discord?mlobby'
+            this.setState({isVisible: true, content: 'Correct Photo!'})
         } else {
+            this.setState({isVisible: true, content: 'Incorrect Photo!'})
             console.log("Incorrect Photo!!!")
         }
     }
@@ -2418,7 +2424,17 @@ class UIRoot extends Component {
                         </div>
                         )}
 
-                        
+                        {
+                            this.state.isVisible && <div className={styles.alert_container}>
+                                <a onClick={() => {
+                                    this.setState({isVisible: false})
+                                }}>❌</a>
+                                <div className={styles.alert_content}>
+                                    {this.state.content} 
+                                </div>
+                                <span>&#128513;</span>
+                            </div>
+                        }
                         
                         {entered && (
                             <div className={styles.switch_button}>
