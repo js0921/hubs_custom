@@ -51,7 +51,7 @@ function Msignup() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'http-equiv': 'Content-Security-Plicy'
+            'http-equiv': 'Content-Security-Policy'
           },
           mode: 'cors',
           body: JSON.stringify(data)
