@@ -21,7 +21,7 @@ import { getPresenceProfileForSession, discordBridgesForPresences } from "../uti
 import { getClientInfoClientId } from "./client-info-dialog";
 import { getCurrentStreamer } from "../utils/component-utils";
 
-import { lang, messages } from "../utils/i18n";
+import { lang, messages } from "../utils/i18n"; 
 import Loader from "./loader";
 import AutoExitWarning from "./auto-exit-warning";
 import { TwoDEntryButton, GenericEntryButton, DaydreamEntryButton } from "./entry-buttons.js";
