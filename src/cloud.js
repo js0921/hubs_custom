@@ -38,6 +38,11 @@ function Msignup() {
           setError('Please input email');
           return;
         }
+        let pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+        if(!pattern.test(email)) {
+          setError('Please enter valid email address.');
+          return;
+        }
         setError('')
 
         const data = {
@@ -60,6 +65,10 @@ function Msignup() {
         fetch('https://snap1.app-spinthe.chat/api/signup', reqOptions)
           .then(res => res.json())
           .then(json => {
+            if(json.hasOwnProperty('message')) {
+              setError(json.message);
+              return;
+            }
             setCurrentUserId(json.id)
 
             // SIGNUP_SUCCESS
@@ -84,7 +93,7 @@ function Msignup() {
     <div className="page-wrapper">
       <div className="login-wrapper">
         {/* <Link className="link-button" to="/login">Login</Link> */}
-        <div className="link-button" onClick={e => window.location.href = '/signin'}>Login</div>
+        <button className="link-button" onClick={e => window.location.href = '/signin'}>Login</button>
       </div>
       <div className="page-title">Create Account!</div>
       <div className="form-wrapper">
@@ -110,7 +119,9 @@ function Msignup() {
           <span className="error-alert">{}</span>
         </div>
         <div className="form-item">
-          <input type="button" className="form-button" value="Enter" onClick={(e) => onSubmit()} />
+          <button className="form-button" onClick={(e) => onSubmit()} >
+            Enter
+          </button>
         </div>
       </div>
     </div>

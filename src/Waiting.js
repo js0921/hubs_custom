@@ -82,6 +82,14 @@ export default function Waiting({method}) {
             <br />
             You'll each have five minutes to guess which is the real photo!<br />
           </p>
+          <div className="page-back">
+            <button 
+                className="link-button" 
+                onClick={e => window.location.href = '/whats-new'}
+              >
+                Back to dashboard
+            </button>
+          </div>
         </div>
       )
     } else if (method == 'avatar') {
@@ -100,6 +108,14 @@ export default function Waiting({method}) {
             You and your partner will have FIVE MINUTES to help each <br />other guess your Avatars!<br />
           </p>
           <div className="page-title">GOOD LUCK AND HAVE FUN!</div> 
+          <div className="page-back">
+            <button 
+                className="link-button" 
+                onClick={e => window.location.href = '/whats-new'}
+              >
+                Back to dashboard
+            </button>
+          </div>
         </div>
       )
     } else {
@@ -113,6 +129,14 @@ export default function Waiting({method}) {
             To play more games, create friend lists and filter<br />
             possible matches, please login<br />
           </p>
+          <div className="page-back">
+            <button 
+                className="link-button" 
+                onClick={e => window.location.href = '/whats-new'}
+              >
+                Back to dashboard
+            </button>
+          </div>
         </div>
       )
     }

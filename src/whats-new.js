@@ -168,6 +168,12 @@ function Mdashboard() {
     enterWaitingRequest('photo')
   }
 
+  const logout = () => {
+    console.log("logout")
+    store.update({mvpActions: {}})
+    window.location.href = "/"
+  }
+
   if(isLink) {
     return <Waiting method={store.state.mvpActions.waitingMethod} />
   } else {
@@ -244,33 +250,38 @@ function Mdashboard() {
           </div>
           <div className="columnMiddle">
   
-            <div className="waitingBtn" onClick={e => onEnterSimple()}>
+            <button className="waitingBtn" onClick={e => onEnterSimple()}>
               <span>
                 SIMPLE<br />
                 CHAT
               </span>
-            </div>
+            </button>
   
-            <div className="waitingBtn" onClick={e => onEnter()} >
+            <button className="waitingBtn" onClick={e => onEnter()} >
               <span>
                 GUESS<br />
                 MY <br />
                 AVATAR
               </span>
-            </div>
+            </button>
   
-            <div className="waitingBtn" onClick={e => onEnterGuess()} >
+            <button className="waitingBtn" onClick={e => onEnterGuess()} >
               <span>
                 GUESS<br />
                 MY<br />
                 PHOTO
               </span>
-            </div>
+            </button>
   
           </div>
           <div className="column" >
             <div className="login-wrapper">
-              <a href="#">Logout</a>
+              <button 
+                className="link-button"
+                onClick={() => logout()}
+              >
+                Logout
+              </button>
             </div>
             <div className='left-page-wrapeer'>
               <div className='friend-title'>

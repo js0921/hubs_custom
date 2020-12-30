@@ -86,7 +86,7 @@ function Msignin() {
   return (
     <div className="page-wrapper">
       <div className="login-wrapper">
-        <div className="link-button" onClick={e => window.location.href = '/cloud'}>Signup</div>
+        <button className="link-button" onClick={e => window.location.href = '/cloud'}>Signup</button>
       </div>
       <div className="page-title">Login</div>
       <div className="form-wrapper">

@@ -80,72 +80,79 @@ function Root() {
   
   const handleEnterBasicInfo = () => {
     if(firstname !== '' && lastname !== '' && email !== '') {
-      setLoading(true)
+      let pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+      if(!pattern.test(email)) {
+        setValidationError('Please enter valid email address.');
+        return;
+      }
+      const data = {
+        firstname: firstname,
+        lastname: lastname,
+        email: email
+      }
+      const reqOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'http-equiv': 'Content-Security-Policy'
+        },
+        mode: 'cors',
+        body: JSON.stringify(data)
+      }
+  
+      // GUEST_SIGNUP_REQUEST
+      store.update({mvpActions: {
+        id: null,
+        role: null,
+        guestSignupError: null
+      }})
+  
+      fetch('https://snap1.app-spinthe.chat/api/guestSignup', reqOptions)
+        .then(res => res.json())
+        .then(json => {
+          if(json.hasOwnProperty('message')) {
+            setValidationError(json.message);
+            return;
+          }
+          setLoading(true)
+          setJwtToken(json.token);
+          setCurrentUserId(json.id);
+  
+          // GUEST_SIGNUP_SUCCESS
+          store.update({mvpActions: {
+            id: json.id,
+            role: json.role,
+            firstname: firstname,
+            lastname: lastname,
+            mtoken: json.token,
+            guestSignupError: null,
+            waitingMethod: 'simple'
+          }})
+          setMtoken(json.token)
+          setGuestSignupError(null)
+  
+          emitIdentity(json.id)
+          // window.location.href = '/link';
+          setIsLink(true);
+        })
+        .catch(error => {
+          console.log(error)
+  
+          // GUEST_SIGNUP_FAILURE
+          store.update({mvpActions: {
+            id: null,
+            role: null,
+            mtoken: null,
+            guestSignupError: error.message,
+          }})
+          setMtoken(null)
+          setGuestSignupError(null)
+          setIsLink(false);
+        })
     } else {
       setValidationError('Please fill all fields to proceed')
       return;
     }
-    // window.location.href = '/mdashboard'
-
-    const data = {
-      firstname: firstname,
-      lastname: lastname,
-      email: email
-    }
-    const reqOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'http-equiv': 'Content-Security-Policy'
-      },
-      mode: 'cors',
-      body: JSON.stringify(data)
-    }
-
-    // GUEST_SIGNUP_REQUEST
-    store.update({mvpActions: {
-      id: null,
-      role: null,
-      guestSignupError: null
-    }})
-
-    fetch('https://snap1.app-spinthe.chat/api/guestSignup', reqOptions)
-      .then(res => res.json())
-      .then(json => {
-        setJwtToken(json.token);
-        setCurrentUserId(json.id);
-
-        // GUEST_SIGNUP_SUCCESS
-        store.update({mvpActions: {
-          id: json.id,
-          role: json.role,
-          firstname: firstname,
-          lastname: lastname,
-          mtoken: json.token,
-          guestSignupError: null,
-          waitingMethod: 'simple'
-        }})
-        setMtoken(json.token)
-        setGuestSignupError(null)
-
-        emitIdentity(json.id)
-        // window.location.href = '/link';
-        setIsLink(true);
-      })
-      .catch(error => {
-        console.log(error)
-
-        // GUEST_SIGNUP_FAILURE
-        store.update({mvpActions: {
-          id: null,
-          role: null,
-          mtoken: null,
-          guestSignupError: error.message,
-        }})
-        setMtoken(null)
-        setGuestSignupError(null)
-        setIsLink(false);
-      })
   }
 
   if(isLink) {
@@ -169,7 +176,7 @@ function Root() {
         There are currently <span>{waitingAmount}</span> people in the queue.
       </div>
       <div className="form-wrapper">
-      <div className="form-item">
+        <div className="form-item">
           <input type="text" className="form-input" placeholder="First Name" onChange={e => setFirstname(e.currentTarget.value)} required /> 
         </div>
         <div className="form-item">
@@ -177,9 +184,6 @@ function Root() {
         </div>
         <div className="form-item">
           <input type="email" className="form-input" placeholder="E-mail Address" onChange={e => setEmail(e.currentTarget.value)} required /> 
-        </div>
-        <div className="form-item">
-          <span className="error-alert">{}</span>
         </div>
         <div className="form-item">
           <span className="error-alert">{validationError}</span>

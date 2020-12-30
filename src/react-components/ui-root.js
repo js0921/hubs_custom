@@ -608,7 +608,7 @@ class UIRoot extends Component {
             headers: {
                 'Content-Type' : 'application/json',
                 'http-equiv' : 'Content-Security-Policy',
-                'content' : " default-src 'self'; script-src *.app-spinthe.chat ; base-uri 'self'"
+                'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify(data)
         };
@@ -641,7 +641,7 @@ class UIRoot extends Component {
             headers: {
                 'Content-Type' : 'application/json',
                 'http-equiv' : 'Content-Security-Policy',
-                'content' : " default-src 'self'; script-src *.app-spinthe.chat ; base-uri 'self'"
+                'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify(data)
         };
@@ -663,7 +663,7 @@ class UIRoot extends Component {
             headers: {
                 'Content-Type' : 'application/json',
                 'http-equiv' : 'Content-Security-Policy',
-                'content' : " default-src 'self'; script-src *.app-spinthe.chat ; base-uri 'self'"
+                'Access-Control-Allow-Origin': '*'
             },
             mode: 'cors',
             body: JSON.stringify(data)
@@ -689,7 +689,7 @@ class UIRoot extends Component {
             headers: {
                 'Content-Type' : 'application/json',
                 'http-equiv' : 'Content-Security-Policy',
-                'content' : " default-src 'self'; script-src *.app-spinthe.chat ; base-uri 'self'"
+                'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify(data)
         };
