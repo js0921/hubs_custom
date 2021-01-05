@@ -2455,11 +2455,10 @@ class UIRoot extends Component {
                                 <div className={styles.right_photo_list}>
                                     <img
                                         src={
-                                            defaultPrefix + 
-                                            this.state.photoURL[0].photoURL ? 
-                                            (this.state.photoList[0].id + 
+                                            this.state.photoList[0].photoURL ? 
+                                            defaultPrefix + (this.state.photoList[0].id + '/' +
                                             this.state.photoList[0].photoURL) :
-                                            defaultImage
+                                            defaultPrefix + defaultImage
                                         }
                                         alt={'image'}
                                         onClick={()=>{
@@ -2468,11 +2467,10 @@ class UIRoot extends Component {
                                     />
                                     <img
                                         src={
-                                            defaultPrefix + 
-                                            this.state.photoURL[1].photoURL ? 
-                                            (this.state.photoList[1].id + 
+                                            this.state.photoList[1].photoURL ? 
+                                            defaultPrefix + (this.state.photoList[1].id + '/' +
                                             this.state.photoList[1].photoURL) :
-                                            defaultImage
+                                            defaultPrefix + defaultImage
                                         }
                                         alt={'image'}
                                         onClick={()=>{
@@ -2481,11 +2479,10 @@ class UIRoot extends Component {
                                     />
                                     <img
                                         src={
-                                            defaultPrefix + 
-                                            this.state.photoURL[2].photoURL ? 
-                                            (this.state.photoList[2].id + 
+                                            this.state.photoList[2].photoURL ? 
+                                            defaultPrefix + (this.state.photoList[2].id + '/' +
                                             this.state.photoList[2].photoURL) :
-                                            defaultImage
+                                            defaultPrefix + defaultImage
                                         }
                                         alt={'image'}
                                         onClick={()=>{
@@ -2496,11 +2493,10 @@ class UIRoot extends Component {
                                 <div className={styles.left_photo_list}>
                                     <img
                                         src={
-                                            defaultPrefix + 
-                                            this.state.photoURL[3].photoURL ? 
-                                            (this.state.photoList[3].id + 
+                                            this.state.photoList[3].photoURL ? 
+                                            defaultPrefix + (this.state.photoList[3].id + '/' +
                                             this.state.photoList[3].photoURL) :
-                                            defaultImage
+                                            defaultPrefix + defaultImage
                                         }
                                         alt={'image'}
                                         onClick={()=>{
@@ -2509,11 +2505,10 @@ class UIRoot extends Component {
                                     />
                                     <img
                                         src={
-                                            defaultPrefix + 
-                                            this.state.photoURL[4].photoURL ? 
-                                            (this.state.photoList[4].id + 
+                                            this.state.photoList[4].photoURL ? 
+                                            defaultPrefix + (this.state.photoList[4].id + '/' +
                                             this.state.photoList[4].photoURL) :
-                                            defaultImage
+                                            defaultPrefix + defaultImage
                                         }
                                         alt={'image'}
                                         onClick={()=>{
@@ -2522,11 +2517,10 @@ class UIRoot extends Component {
                                     />
                                     <img
                                         src={
-                                            defaultPrefix + 
-                                            this.state.photoURL[5].photoURL ? 
-                                            (this.state.photoList[5].id + 
+                                            this.state.photoList[5].photoURL ? 
+                                            defaultPrefix + (this.state.photoList[5].id + '/' +
                                             this.state.photoList[5].photoURL) :
-                                            defaultImage
+                                            defaultPrefix + defaultImage
                                         }
                                         alt={'image'}
                                         onClick={()=>{
