@@ -123,6 +123,9 @@ const userId = qs.get('uid');
 const oppositeId = qs.get('oppositeId');
 const method = qs.get('method');
 
+const defaultPrefix = 'https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/';
+const defaultImage = '6538/1607503778304.jpg';
+
 class UIRoot extends Component {
     willCompileAndUploadMaterials = false;
 
@@ -1818,6 +1821,7 @@ class UIRoot extends Component {
 
         const streamer = getCurrentStreamer();
         const streamerName = streamer && streamer.displayName;
+
         return (
             <ReactAudioContext.Provider value={this.state.audioContext}>
                 <IntlProvider locale={lang} messages={messages}>
@@ -2450,22 +2454,39 @@ class UIRoot extends Component {
                             (method == 'photo' && this.state.photoList) ? <>
                                 <div className={styles.right_photo_list}>
                                     <img
-                                        src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/` +
-                                        `${this.state.photoList[0].id}/${this.state.photoList[0].photoURL}`}
+                                        src={
+                                            defaultPrefix + 
+                                            this.state.photoURL[0].photoURL ? 
+                                            (this.state.photoList[0].id + 
+                                            this.state.photoList[0].photoURL) :
+                                            defaultImage
+                                        }
                                         alt={'image'}
                                         onClick={()=>{
                                             this.toggleAnswerPhoto(0)
                                         }}
                                     />
                                     <img
-                                        src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/${this.state.photoList[1].id}/${this.state.photoList[1].photoURL}`}
+                                        src={
+                                            defaultPrefix + 
+                                            this.state.photoURL[1].photoURL ? 
+                                            (this.state.photoList[1].id + 
+                                            this.state.photoList[1].photoURL) :
+                                            defaultImage
+                                        }
                                         alt={'image'}
                                         onClick={()=>{
                                             this.toggleAnswerPhoto(1)
                                         }}
                                     />
                                     <img
-                                        src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/${this.state.photoList[2].id}/${this.state.photoList[2].photoURL}`}
+                                        src={
+                                            defaultPrefix + 
+                                            this.state.photoURL[2].photoURL ? 
+                                            (this.state.photoList[2].id + 
+                                            this.state.photoList[2].photoURL) :
+                                            defaultImage
+                                        }
                                         alt={'image'}
                                         onClick={()=>{
                                             this.toggleAnswerPhoto(2)
@@ -2474,21 +2495,39 @@ class UIRoot extends Component {
                                 </div> 
                                 <div className={styles.left_photo_list}>
                                     <img
-                                        src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/${this.state.photoList[3].id}/${this.state.photoList[3].photoURL}`}
+                                        src={
+                                            defaultPrefix + 
+                                            this.state.photoURL[3].photoURL ? 
+                                            (this.state.photoList[3].id + 
+                                            this.state.photoList[3].photoURL) :
+                                            defaultImage
+                                        }
                                         alt={'image'}
                                         onClick={()=>{
                                             this.toggleAnswerPhoto(3)
                                         }}
                                     />
                                     <img
-                                        src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/${this.state.photoList[4].id}/${this.state.photoList[4].photoURL}`}
+                                        src={
+                                            defaultPrefix + 
+                                            this.state.photoURL[4].photoURL ? 
+                                            (this.state.photoList[4].id + 
+                                            this.state.photoList[4].photoURL) :
+                                            defaultImage
+                                        }
                                         alt={'image'}
                                         onClick={()=>{
                                             this.toggleAnswerPhoto(4)
                                         }}
                                     />
                                     <img
-                                        src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/${this.state.photoList[5].id}/${this.state.photoList[5].photoURL}`}
+                                        src={
+                                            defaultPrefix + 
+                                            this.state.photoURL[5].photoURL ? 
+                                            (this.state.photoList[5].id + 
+                                            this.state.photoList[5].photoURL) :
+                                            defaultImage
+                                        }
                                         alt={'image'}
                                         onClick={()=>{
                                             this.toggleAnswerPhoto(5)

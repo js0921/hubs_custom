@@ -6,6 +6,7 @@ import { setMethod } from './react-components/utils'
 import Store from "./storage/store";
 import { connectToAlerts, emitIdentity } from './storage/socketUtil';
 import Waiting from './Waiting';
+import UserAuth from './UserAuth';
 
 const store = new Store();
 window.APP = { store };
@@ -16,12 +17,14 @@ function Mdashboard() {
   const [uploadFail, setUploadFail] = useState(false);
   const [waitingAmount, setWaitingAmount] = useState();
   const [isLink, setIsLink] = useState(false);
+  const [emptyPhoto, setEmptyPhoto] = useState('');
+  const [checkUpdateStore, setCheckUpdateStore] = useState(false);
 
   React.useEffect(() => {
     connectToAlerts()
     emitIdentity(store.state.mvpActions.id);
     setCurrentUser(store.state.mvpActions)
-  }, [])
+  }, [checkUpdateStore])
 
   React.useEffect(() => {
     window.addEventListener("waitingAmount", (e) => {
@@ -83,6 +86,7 @@ function Mdashboard() {
           photoURL: json.url,
           uploadFailed: false
         }})
+        setCheckUpdateStore(true);
       })
       .catch(error => {
         console.log(error);
@@ -164,13 +168,18 @@ function Mdashboard() {
   }
 
   const onEnterGuess = () => {
+    console.log(currentUser.photoURL);
+    if(!currentUser.photoURL) {
+      setEmptyPhoto("Please upload your photo!");
+      return;
+    }
     store.update({mvpActions: {waitingMethod: 'photo'} })
     enterWaitingRequest('photo')
   }
 
   const logout = () => {
     console.log("logout")
-    store.update({mvpActions: {}})
+    store.update({mvpActions: {mtoken: ""}})
     window.location.href = "/"
   }
 
@@ -178,7 +187,7 @@ function Mdashboard() {
     return <Waiting method={store.state.mvpActions.waitingMethod} />
   } else {
     return (
-      <>
+      <UserAuth>
         <div className="row">
           <div style={{
             textAlign: 'center',
@@ -204,14 +213,14 @@ function Mdashboard() {
                       <img
                         src={URL.createObjectURL(photoFile)}
                         alt={photoFile.name}
-                        style={{ width: '100%', height: '100%', resize: 'contain' }}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       /> : 
                       (
                         currentUser?.photoURL ?
                         <img
                           src={`https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/photos/${currentUser.id}/${currentUser.photoURL}`}
                           alt={'avatar'}
-                          style={{ width: '100%', height: '100%', resize: 'contain' }}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         /> : 
                         <label style={{ position: "absolute" }}>Upload your photo</label>
                       )
@@ -272,6 +281,12 @@ function Mdashboard() {
                 PHOTO
               </span>
             </button>
+
+            <div className="error-container">
+              <span className="error">
+                {emptyPhoto}
+              </span>
+            </div>
   
           </div>
           <div className="column" >
@@ -310,7 +325,7 @@ function Mdashboard() {
             </div>
           </div>
         </div>
-      </>
+      </UserAuth>
     );
   }
   }

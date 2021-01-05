@@ -363,9 +363,9 @@ body.vr-mode {
     width: 200px;
     height: 200px;
     opacity: 1;
-    resize: contain;
     pointer-events: auto;
     cursor: pointer;
+    object-fit: cover;
   }
 }
 
@@ -390,9 +390,9 @@ body.vr-mode {
     width: 200px;
     height: 200px;
     opacity: 1;
-    resize: contain;
     pointer-events: auto;
     cursor: pointer;
+    object-fit: cover;
   }
 }
 

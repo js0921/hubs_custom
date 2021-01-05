@@ -7,6 +7,7 @@ import {
   setJwtToken, 
   setCurrentUserId,
 } from './react-components/utils';
+import UserAuth from './UserAuth';
 
 const store = new Store()
 window.APP = { store }
@@ -90,6 +91,7 @@ function Msignup() {
         }
 
   return (
+    <UserAuth>
     <div className="page-wrapper">
       <div className="login-wrapper">
         {/* <Link className="link-button" to="/login">Login</Link> */}
@@ -125,6 +127,7 @@ function Msignup() {
         </div>
       </div>
     </div>
+    </UserAuth>
   );
 }
 

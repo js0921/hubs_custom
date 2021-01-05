@@ -7,6 +7,7 @@ import {
   setJwtToken, 
   setCurrentUserId,
 } from './react-components/utils';
+import UserAuth from './UserAuth';
 
 const store = new Store()
 window.APP = { store }
@@ -84,6 +85,7 @@ function Msignin() {
   }
 
   return (
+    <UserAuth>
     <div className="page-wrapper">
       <div className="login-wrapper">
         <button className="link-button" onClick={e => window.location.href = '/cloud'}>Signup</button>
@@ -111,6 +113,7 @@ function Msignin() {
         </div>
       </div>
     </div>
+    </UserAuth>
   );
 }
 

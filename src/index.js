@@ -13,6 +13,7 @@ import {
 } from './react-components/utils';
 import {createAndRedirectToNewHub} from '../src/utils/phoenix-utils';
 import Waiting from './Waiting';
+import UserAuth from './UserAuth';
 
 const store = new Store()
 window.APP = { store }
@@ -166,37 +167,39 @@ function Root() {
   }
 
   return (
-    <div className="page-wrapper">
-      <div className="login-wrapper">
-        {/* <Link className="link-button" to='/login'>Login</Link> */}
-        <div className="link-button" onClick={e => window.location.href = '/signin'}>Login</div>
+    <UserAuth>
+      <div className="page-wrapper">
+        <div className="login-wrapper">
+          {/* <Link className="link-button" to='/login'>Login</Link> */}
+          <div className="link-button" onClick={e => window.location.href = '/signin'}>Login</div>
+        </div>
+        <div className="page-title">Welcome!</div>
+        <div className="queue-status">
+          There are currently <span>{waitingAmount}</span> people in the queue.
+        </div>
+        <div className="form-wrapper">
+          <div className="form-item">
+            <input type="text" className="form-input" placeholder="First Name" onChange={e => setFirstname(e.currentTarget.value)} required /> 
+          </div>
+          <div className="form-item">
+            <input type="text" className="form-input" placeholder="Last Name" onChange={e => setLastname(e.currentTarget.value)} required /> 
+          </div>
+          <div className="form-item">
+            <input type="email" className="form-input" placeholder="E-mail Address" onChange={e => setEmail(e.currentTarget.value)} required /> 
+          </div>
+          <div className="form-item">
+            <span className="error-alert">{validationError}</span>
+          </div>
+          <div className="form-item">
+            <input 
+              type="button" 
+              className="form-button" 
+              value="Enter" 
+              onClick={(e) => handleEnterBasicInfo()}/>
+          </div>
+        </div>
       </div>
-      <div className="page-title">Welcome!</div>
-      <div className="queue-status">
-        There are currently <span>{waitingAmount}</span> people in the queue.
-      </div>
-      <div className="form-wrapper">
-        <div className="form-item">
-          <input type="text" className="form-input" placeholder="First Name" onChange={e => setFirstname(e.currentTarget.value)} required /> 
-        </div>
-        <div className="form-item">
-          <input type="text" className="form-input" placeholder="Last Name" onChange={e => setLastname(e.currentTarget.value)} required /> 
-        </div>
-        <div className="form-item">
-          <input type="email" className="form-input" placeholder="E-mail Address" onChange={e => setEmail(e.currentTarget.value)} required /> 
-        </div>
-        <div className="form-item">
-          <span className="error-alert">{validationError}</span>
-        </div>
-        <div className="form-item">
-          <input 
-            type="button" 
-            className="form-button" 
-            value="Enter" 
-            onClick={(e) => handleEnterBasicInfo()}/>
-        </div>
-      </div>
-    </div>
+    </UserAuth>
   );
 }
 
