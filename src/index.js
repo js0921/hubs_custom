@@ -27,7 +27,11 @@ function Root() {
   const [validationError, setValidationError] = useState('')
   const [mtoken, setMtoken] = useState(null);
   const [guestSignupError, setGuestSignupError] = useState(null);
-  const [waitingAmount, setWaitingAmount] = useState();
+  const [waitingAmount, setWaitingAmount] = useState({
+    simple: 0,
+    avatar: 0,
+    photo: 0
+  });
   const [isLink, setIsLink] = useState(false);
 
   React.useEffect(() => {
@@ -48,7 +52,7 @@ function Root() {
   }, [])
 
   React.useEffect(() => {
-    connectToAlerts()
+    connectToAlerts();
     window.addEventListener("waitingAmount", (e) => {
       setWaitingAmount(e.detail);
     }, false)
@@ -65,8 +69,22 @@ function Root() {
       .then(res => res.json())
       .then(json => {
         if(json.success) {
-          store.update({mvpActions: {waitingAmount: json.amount} })
-          setWaitingAmount(json.amount)        
+          // store.update({mvpActions: {waitingAmount: json.amount} })
+          let typeAmount = {
+            simple: 0,
+            avatar: 0,
+            photo: 0
+          }
+          for(let i = 0; i< json.amount.length; i++) {
+              if(json.amount[i].amount == 'simple') {
+                  typeAmount.simple += 1;
+              } else if(json.amount[i].amount == 'avatar') {
+                  typeAmount.avatar += 1;
+              } else if(json.amount[i].amount == 'photo') {
+                  typeAmount.photo += 1;
+              }
+          }
+          setWaitingAmount(typeAmount);    
         } else {
           console.log("error")
         }
@@ -175,7 +193,7 @@ function Root() {
         </div>
         <div className="page-title">Welcome!</div>
         <div className="queue-status">
-          There are currently <span>{waitingAmount}</span> people in the queue.
+        There are currently <span>simple: {waitingAmount.simple}, avatar: {waitingAmount.avatar}, photo: {waitingAmount.photo}</span> people in the queue.
         </div>
         <div className="form-wrapper">
           <div className="form-item">

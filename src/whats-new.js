@@ -15,7 +15,11 @@ function Mdashboard() {
   const [photoFile, setPhotoFile] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [uploadFail, setUploadFail] = useState(false);
-  const [waitingAmount, setWaitingAmount] = useState();
+  const [waitingAmount, setWaitingAmount] = useState({
+    simple: 0,
+    avatar: 0,
+    photo: 0
+  });
   const [isLink, setIsLink] = useState(false);
   const [emptyPhoto, setEmptyPhoto] = useState('');
   const [checkUpdateStore, setCheckUpdateStore] = useState(false);
@@ -42,8 +46,24 @@ function Mdashboard() {
       .then(res => res.json())
       .then(json => {
         if(json.success) {
-          store.update({mvpActions: {waitingAmount: json.amount} })
-          setWaitingAmount(json.amount)        
+          // store.update({mvpActions: {waitingAmount: json.amount} })
+          let typeAmount = {
+            simple: 0,
+            avatar: 0,
+            photo: 0
+          }
+          for(let i = 0; i< json.amount.length; i++) {
+              if(json.amount[i].amount == 'simple') {
+                  typeAmount.simple += 1;
+              } else if(json.amount[i].amount == 'avatar') {
+                  typeAmount.avatar += 1;
+              } else if(json.amount[i].amount == 'photo') {
+                  typeAmount.photo += 1;
+              }
+          }
+          console.log("json in whats news: ", json);
+          console.log("typeAmount in whats news: ", typeAmount);
+          setWaitingAmount(typeAmount);
         } else {
           console.log("error")
         }
@@ -111,17 +131,23 @@ function Mdashboard() {
 
   const enterWaitingRequest = (type) => {
     const mtoken = store.state.mvpActions.mtoken;
+
+    const body = {
+      waiting: 1,
+      type: type
+    }
     const reqOptions = {
-      method: "GET",
+      method: "POST",
       headers: {
         'Authorization': mtoken,
         'Content-Type': 'application/json',
         'http-equiv': 'Content-Security-Policy'
       },
-      mode: 'cors'
+      mode: 'cors',
+      body: JSON.stringify(body)
     }
 
-    fetch('https://snap1.app-spinthe.chat/api/enterWaiting/1', reqOptions)
+    fetch('https://snap1.app-spinthe.chat/api/enterWaiting', reqOptions)
       .then(res => res.json())
       .then(json => {
         if(type == 'avatar') {
@@ -204,7 +230,7 @@ function Mdashboard() {
           <div className="column" >
             <div className="left-page-wrapeer">
               <div className="queue-status">
-                There are currently <span>{waitingAmount}</span> people in the queue.
+              There are currently <span>simple: {waitingAmount.simple}, avatar: {waitingAmount.avatar}, photo: {waitingAmount.photo}</span> people in the queue.
               </div>
               <div className="info-head">
                 <div className={"upload-photo"} onClick={e => onUploadPhoto(e)}>

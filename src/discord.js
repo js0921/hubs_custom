@@ -63,7 +63,10 @@ function Root() {
                     isWaiting: true
                 }})
                 emitIdentity(json.id);
-                emitWaiting(json.id);
+                emitWaiting({
+                  userId: json.id,
+                  type: store.state.mvpActions.waitingMethod
+                });
                 // window.location.href = '/link';
                 setIsLink(true);
             })

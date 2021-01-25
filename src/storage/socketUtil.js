@@ -22,11 +22,25 @@ export function connectToAlerts() {
 
     socket.on("alert", payload => {
         if(payload.type === 'updateWaiting') {
-            console.log("payload in udpateWaiting: ", payload)
-            store.update({mvpActions: {
-                waitingAmount: payload.amount
-            }})
-            window.dispatchEvent(new CustomEvent("waitingAmount", {"detail": payload.amount}))
+            console.log("payload in udpateWaiting: ", payload.amount);
+            // store.update({mvpActions: {
+            //     waitingAmount: payload.amount
+            // }})
+            let typeAmount = {
+                simple: 0,
+                avatar: 0,
+                photo: 0
+            }
+            for(let i = 0; i< payload.amount.length; i++) {
+                if(payload.amount[i].waitingType == 'simple') {
+                    typeAmount.simple += 1;
+                } else if(payload.amount[i].waitingType == 'avatar') {
+                    typeAmount.avatar += 1;
+                } else if(payload.amount[i].waitingType == 'photo') {
+                    typeAmount.photo += 1;
+                }
+            }
+            window.dispatchEvent(new CustomEvent("waitingAmount", {"detail": typeAmount}))
         } else if(payload.type === 'assignUpdate') {
             console.log("payload in assignUpdate: ", payload)
             try {
