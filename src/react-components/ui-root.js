@@ -578,7 +578,7 @@ class UIRoot extends Component {
             // window.location.href = '/discord?mlobby';
             this.setState({isVisible: true, content: 'Correct Answer!'})
         } else {
-            this.setState({isVisible: true, content: 'Incorrect Answer!'})
+            this.setState({isVisible: false, content: 'Incorrect Answer!'})
             console.log('InCorrect Answer!!!');
         }
     }
@@ -591,7 +591,7 @@ class UIRoot extends Component {
             // window.location.href = '/discord?mlobby'
             this.setState({isVisible: true, content: 'Correct Photo!'})
         } else {
-            this.setState({isVisible: true, content: 'Incorrect Photo!'})
+            this.setState({isVisible: false, content: 'Incorrect Photo!'})
             console.log("Incorrect Photo!!!")
         }
     }
