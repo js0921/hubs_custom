@@ -4,15 +4,19 @@ import { Link } from "react-router-dom";
 
 import "./assets/stylesheets/styles.scss";
 import { getMethod, getOppositeUserId } from './react-components/utils';
-import { connectToAlerts, emitIdentity, emitWaiting } from './storage/socketUtil';
 import Store from './storage/store';
 
 const store = new Store();
 window.APP = { store };
 
+const firstLink = "https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/video/FIRST.mp4";
+const secondLink = "https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/video/SECOND.mp4";
+const thirdLink = "https://app-spinthe-bucket.s3-us-west-2.amazonaws.com/video/THIRD.mp4";
+
 export default function Waiting({method}) {
 
-    // const [method, setMethod] = useState(null)
+    const typeMethod = store.state.mvpActions.demoType;
+
     const [firstname, setFirstname] = useState(null)
     const [lastname, setLastname] = useState(null)
     const [isAssigned, setIsAssigned] = useState(false)
@@ -21,16 +25,6 @@ export default function Waiting({method}) {
     const [oppositeAvatarID, setOppositeAvatarID] = useState(null)
     const [uid, setUid] = useState(null)
     const [oppositeId, setOppositeId] = useState(null)
-
-    // React.useEffect(() => {
-    //   async function SocketConnect() {
-    //     // await connectToAlerts()
-    //     await emitIdentity(store.state.mvpActions.id);
-    //     await emitWaiting(store.state.mvpActions.id);
-    //   }
-
-    //   SocketConnect();
-    // }, [])
 
     React.useEffect(() => {
       window.addEventListener("isAssigned", (e) => {
@@ -74,6 +68,7 @@ export default function Waiting({method}) {
       return (
         <div className="page-wrapper">
           <div className="page-title-simple">PLEASE WAIT WHILE WE FIND YOU A MATCH!</div >
+          
           <p className="waiting-page-instruction-simple">
             Once you are matched, you will see three six photos.<br />
             One is of you.<br />
@@ -89,6 +84,10 @@ export default function Waiting({method}) {
               >
                 Back to dashboard
             </button>
+          </div>
+          <div className="video">
+            <video width="300" height="300" src={typeMethod == 4 ? thirdLink : secondLink} autoPlay controls>
+            </video>
           </div>
         </div>
       )
@@ -115,6 +114,10 @@ export default function Waiting({method}) {
               >
                 Back to dashboard
             </button>
+          </div>
+          <div className="video">
+            <video width="300" height="300" src={typeMethod == 4 ? thirdLink : firstLink} autoPlay controls>
+            </video>
           </div>
         </div>
       )

@@ -179,7 +179,8 @@ export const SCHEMA = {
         assignoppositeAvatarID: {type: ["null", "string"]},
         assignuid: {type: ["null", "number"]},
         assignOppositeUserId: {type: ["null", "number"]},
-        isAssigned: {type: "boolean"}
+        isAssigned: {type: "boolean"},
+        demoType: {type: ["null", "number"]}
       }
     }
   },

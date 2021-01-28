@@ -162,7 +162,7 @@ function Mdashboard() {
             isWaiting: true,
             waitingMethod: 'photo'
           }})
-        } else {
+        } else if(type == 'simple') {
           // ENTER_SIMPLE_WAITING_SUCCESS
           store.update({mvpActions: {
             isWaiting: true,
@@ -188,13 +188,37 @@ function Mdashboard() {
     
   }
 
+  const RandomMethod = () => {
+    let randomNumber = Math.floor(Math.random() * 2) + 1;
+    if (randomNumber == 1) {
+      return onEnter();
+    } else {
+      return onEnterGuess();
+    }
+  }
+
+  const onEnterDemo = () => {
+    let demoType = store.state.mvpActions.demoType;
+    if(!demoType) {
+      store.update({mvpActions: {demoType: 1}}) 
+      onEnter();
+    } else if(demoType == 1) {
+      store.update({mvpActions: {demoType: 2}})
+      onEnterGuess();
+    } else if(demoType == 2) {
+      store.update({mvpActions: {demoType: 3}})
+      RandomMethod();
+    } else if(demoType == 3) {
+      RandomMethod();
+    }
+  }
+
   const onEnterSimple = () => {
     store.update({mvpActions: {waitingMethod: 'simple'} })
     enterWaitingRequest('simple')
   }
 
   const onEnterGuess = () => {
-    console.log(currentUser.photoURL);
     if(!currentUser.photoURL) {
       setEmptyPhoto("Please upload your photo!");
       return;
@@ -285,6 +309,13 @@ function Mdashboard() {
           </div>
           <div className="columnMiddle">
   
+            <button className="demoBtn" onClick={e => onEnterDemo()}>
+              <span>
+                DEMO<br />
+                VERSION
+              </span>
+            </button>
+
             <button className="waitingBtn" onClick={e => onEnterSimple()}>
               <span>
                 SIMPLE<br />
